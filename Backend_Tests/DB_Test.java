@@ -10,10 +10,9 @@ public class DB_Test {
 	
     public static String get_pass(String user) {
 
-	return "bettywhite420sucks";
-	//Console console = System.console();
-	//char passwordArr[] = console.readPassword("Enter password for "+user+": ");
-	//return new String(passwordArr);
+	Console console = System.console();
+	char passwordArr[] = console.readPassword("Enter password for "+user+": ");
+	return new String(passwordArr);
 
     }
 
