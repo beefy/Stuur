@@ -1,0 +1,2 @@
+javac DB_Test.java
+sudo java -cp .:/home/nate/Work/repos/CrowdShout/Backend_Tests/mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar DB_Test
