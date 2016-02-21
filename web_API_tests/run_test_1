@@ -1,6 +1,0 @@
-#/usr/bin/env bash
-
-cd test_1/gs-rest-service/initial
-./gradlew build
-gnome-terminal -x sh -c "sleep 3.5; python -mwebbrowser http://localhost:8080/greeting;"
-java -jar build/libs/gs-rest-service-0.1.0.jar

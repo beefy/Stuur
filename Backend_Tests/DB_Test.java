@@ -38,19 +38,15 @@ public class DB_Test {
     }
 
     public static void main(String[] args) {
-        
+
+
+	String msg_text = "yo hey";
+	String sending_id = "0";       
+ 
 	try {
 	    Connection conn = establish_connection();
             Statement stmt = conn.createStatement();
-	    ResultSet rs = stmt.executeQuery("SELECT * FROM user_tbl");
-	    while(rs.next()) {
-		int id = rs.getInt("user_id");
-		String user_key = rs.getString("user_key");
-		int num_profanity = rs.getInt("num_profanity");
-		boolean is_offensive = rs.getInt("is_offensive") == 1;
-		boolean has_new_msg = rs.getInt("has_new_msg") == 1;	
-		System.out.format("%s, %s, %s, %s, %s\n", id, user_key, num_profanity, is_offensive, has_new_msg);
-	    }
+	    ResultSet rs = stmt.executeQuery("CALL send_msg('yo heyyy', 0);");
 
 	    // close after reading from result set
             stmt.close();
