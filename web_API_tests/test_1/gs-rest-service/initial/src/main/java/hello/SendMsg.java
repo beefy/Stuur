@@ -7,20 +7,18 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.io.Console;
 
-public class Greeting {
+public class SendMsg {
 
     private final String msg_text;
     private final String sending_id;
 
-    public Greeting(String msg_text, String sending_id) {
+    public SendMsg(String msg_text, String sending_id) {
         this.msg_text = msg_text;
 	this.sending_id = sending_id;
     }
 
     public String getContent() {
 	
-	String msg_text = "yo hey";
-        String sending_id = "0";
 	String user = "root";
 	String pass = "";
 
@@ -37,7 +35,7 @@ public class Greeting {
 	try {
 	    Connection conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/crowd_shout",user,pass);
             Statement stmt = conn.createStatement();
-            stmt.executeQuery("CALL send_msg('yo heyyy', 0);");
+            stmt.executeQuery("CALL send_msg('"+msg_text+"', "+sending_id+");");
 
 
             // close after reading from result set
