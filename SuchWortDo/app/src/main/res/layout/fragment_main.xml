@@ -17,7 +17,7 @@
         android:layout_marginTop="-12dp"
         android:layout_weight="100" />
 
-    <EditText
+    <com.suchwortdo.suchwortdo.ActionEditText
         android:id="@+id/msg_box"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
@@ -31,13 +31,34 @@
         android:gravity="center"
         android:includeFontPadding="false"
         android:hint="@string/msg_hint"
-        android:inputType="textMultiLine"
         android:background="#FFF"
-        android:singleLine="false"
         android:maxLines="8"
         android:maxLength="80"
         android:scrollbars="none"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:imeOptions="actionSend"/>
+
+    <com.suchwortdo.suchwortdo.ActionEditText
+        android:id="@+id/anim_msg_box"
+        android:visibility="invisible"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:hint="@string/msg_hint"
+        android:background="#FFF"
+        android:maxLines="8"
+        android:maxLength="80"
+        android:scrollbars="none"
+        android:layout_weight="1"
+        android:imeOptions="actionSend"/>
 
     <Button
         android:id="@+id/add_friend_btn"

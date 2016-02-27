@@ -8,13 +8,12 @@
     android:fitsSystemWindows="true"
     tools:context="com.suchwortdo.suchwortdo.MainActivity">
 
-
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
 
-        android:src="@drawable/background"
-        android:scaleType="centerCrop" />
+    android:src="@drawable/background"
+    android:scaleType="centerCrop" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"
