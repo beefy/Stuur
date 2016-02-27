@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">Crowd Shout</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="msg_hint">Tell someone something</string>
-</resources>
