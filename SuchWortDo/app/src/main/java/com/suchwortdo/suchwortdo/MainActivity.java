@@ -62,6 +62,45 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setCurrentItem(2);
     }
 
+    public static Dialog onCreateDialog(Bundle savedInstanceState, View v, String nick, String key) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+        // Get the layout inflater
+        LayoutInflater inflater = LayoutInflater.from(v.getContext());
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        View dialogView = inflater.inflate(R.layout.dialog_add_friend, null);
+        builder.setView(dialogView)
+                // Add action buttons
+                .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        // update the user
+                    }
+                })
+                .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        // delete the user
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        EditText nickname_widget = (EditText) dialogView.findViewById(R.id.nickname);
+        EditText key_widget = (EditText) dialogView.findViewById(R.id.key);
+        TextView title = (TextView) dialogView.findViewById(R.id.dialog_title);
+        nickname_widget.setText(nick);
+        key_widget.setText(key);
+        title.setText("Edit " + nick);
+
+        return builder.create();
+    }
+
     public static Dialog onCreateDialog(Bundle savedInstanceState, View v) {
         AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
         // Get the layout inflater
@@ -74,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        // sign in the user ...
+                        // add the user
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

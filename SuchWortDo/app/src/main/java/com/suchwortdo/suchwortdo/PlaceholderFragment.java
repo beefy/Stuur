@@ -7,6 +7,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,19 +68,38 @@ public class PlaceholderFragment extends Fragment {
             add_friend_btn.setVisibility(rootView.VISIBLE);
             hideKeyboard(getActivity());
 
+            final String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
+            final String[] keys = {"5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW"};
+
             // friends
-            String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
             ArrayAdapter<String> friends_Adapter =
                     new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, friends);
-            ListView friends_listView = (ListView) rootView.findViewById(R.id.friend_list);
+            final ListView friends_listView = (ListView) rootView.findViewById(R.id.friend_list);
             friends_listView.setAdapter(friends_Adapter);
+            friends_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String selected_nick = friends[position];
+                    String selected_key = keys[position];
+                    Dialog dialog = onCreateDialog(savedInstanceState, view, selected_nick, selected_key);
+                    dialog.show();
+                }
+            });
 
             // keys
-            String[] keys = {"5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW"};
             ArrayAdapter<String> keys_Adapter =
                     new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, keys);
             ListView keys_listView = (ListView) rootView.findViewById(R.id.key_list);
             keys_listView.setAdapter(keys_Adapter);
+            keys_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String selected_nick = friends[position];
+                    String selected_key = keys[position];
+                    Dialog dialog = onCreateDialog(savedInstanceState, view, selected_nick, selected_key);
+                    dialog.show();
+                }
+            });
 
             // add friend button
             add_friend_btn.setOnClickListener(new View.OnClickListener() {
