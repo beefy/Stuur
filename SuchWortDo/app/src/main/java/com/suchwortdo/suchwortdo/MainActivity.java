@@ -10,13 +10,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -49,17 +55,6 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
     }
 
 
@@ -98,10 +93,42 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            String[] page_title = {"Friends","Local","Global"};
+            String[] page_title = {"Settings","Friend List","Friends","Local","Global"};
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(page_title[getArguments().getInt(ARG_SECTION_NUMBER)-1]);
+            int section_num = getArguments().getInt(ARG_SECTION_NUMBER)-1;
+            textView.setText(page_title[section_num]);
+
+            // hide message box for settings and friend list screens
+            EditText msg_box = (EditText) rootView.findViewById(R.id.msg_box);
+            Button add_friend_btn = (Button) rootView.findViewById(R.id.add_friend_btn);
+            if(section_num == 0) {
+                // settings page
+                msg_box.setVisibility(rootView.GONE);
+                add_friend_btn.setVisibility(rootView.GONE);
+            } else if(section_num == 1) {
+                // friend list page
+                msg_box.setVisibility(rootView.GONE);
+                add_friend_btn.setVisibility(rootView.VISIBLE);
+
+                // friends
+                String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
+                ArrayAdapter<String> friends_Adapter =
+                        new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, friends);
+                ListView friends_listView = (ListView) rootView.findViewById(R.id.friend_list);
+                friends_listView.setAdapter(friends_Adapter);
+
+                // keys
+                String[] keys = {"5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW"};
+                ArrayAdapter<String> keys_Adapter =
+                        new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, keys);
+                ListView keys_listView = (ListView) rootView.findViewById(R.id.key_list);
+                keys_listView.setAdapter(keys_Adapter);
+            } else {
+                    msg_box.setVisibility(rootView.VISIBLE);
+                add_friend_btn.setVisibility(rootView.GONE);
+            }
+
             return rootView;
         }
     }
@@ -126,17 +153,21 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 5;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Friends";
+                    return "Settings";
                 case 1:
-                    return "Local";
+                    return "Friend List";
                 case 2:
+                    return "Friends";
+                case 3:
+                    return "Local";
+                case 4:
                     return "Global";
             }
             return null;
