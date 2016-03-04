@@ -23,6 +23,8 @@ import android.widget.Toast;
 
 import com.stuur.stuur.R;
 
+import java.util.concurrent.ExecutionException;
+
 public class MainActivity extends AppCompatActivity {
 
     public static boolean init = true;
@@ -178,9 +180,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation arg0) {
                 EditText editText = (EditText) finalv.findViewById(R.id.msg_box);
-                editText.setText("", TextView.BufferType.EDITABLE);
+                String msg_text = editText.getText().toString();
 
-                CharSequence text = "Message Sent";
+                // send message
+                String[] params = {msg_text,"12"};
+                NetworkTask network_task = new NetworkTask("send_msg", params);
+                String[] resp = new String[0];
+                try {
+                    resp = network_task.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                // toast
+                CharSequence text;
+                if(resp[0] == "true") text = "Message Sent";
+                else text = "Network Error :(";
+                editText.setText("", TextView.BufferType.EDITABLE);
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(finalv.getContext(), text, duration);
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, -200);
