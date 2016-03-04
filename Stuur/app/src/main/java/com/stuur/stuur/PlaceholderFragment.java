@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.stuur.stuur.R;
 
@@ -115,6 +116,9 @@ public class PlaceholderFragment extends Fragment {
             });
 
         } else {
+
+            receiveMsgAnimation(rootView);
+
             msg_box.setVisibility(rootView.VISIBLE);
             add_friend_btn.setVisibility(rootView.GONE);
 
@@ -135,8 +139,6 @@ public class PlaceholderFragment extends Fragment {
                 }
             });
         }
-
-        receiveMsgAnimation(rootView,section_num);
 
         return rootView;
     }

@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -99,16 +100,47 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         return success;
     }
 
+    public static String[] receive_msg(String receive_id) {
+
+        // send message
+        String parameters = "receive_id=" + receive_id;
+        String network_call = base_url+port_num+receive_msg_endpoint+parameters;
+        String resp = "";
+        String[] messages;
+        try {
+            resp = get_website_src(network_call);
+
+            // read response
+            JSONArray obj = (JSONArray) new JSONObject(resp).get("content");
+            messages = new String[obj.length()];
+            for(int i = 0; i < obj.length(); i++) {
+                messages[i] = obj.get(i).toString();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return messages;
+    }
+
     @Override
     protected String[] doInBackground(Void... params) {
         switch(endpoint) {
             case "send_msg":
-                String[] out = {toString(send_msg(parameters[0], parameters[1]))};
-                return out;
+                String[] out1 = {toString(send_msg(parameters[0], parameters[1]))};
+                return out1;
+            case "receive_msg":
+                String[] out2 = receive_msg(parameters[0]);
+                return out2;
             default:
                 break;
         }
-        return new String[0];
+        return null;
     }
 
     public static String toString(boolean value) {

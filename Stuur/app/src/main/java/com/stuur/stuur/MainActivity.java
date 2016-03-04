@@ -3,6 +3,7 @@ package com.stuur.stuur;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
@@ -163,45 +164,47 @@ public class MainActivity extends AppCompatActivity {
         v.findViewById(R.id.add_friend_dialog).startAnimation(shake);
     }
 
-    public static void receiveMsgAnimation(View v, int section_num) {
+    public static void receiveMsgAnimation(View v) {
         final View finalv = v;
+
         Animation move_down = AnimationUtils.loadAnimation(v.getContext(), R.anim.move_down);
         Animation arrive = AnimationUtils.loadAnimation(v.getContext(), R.anim.arrive);
 
-        arrive.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation arg0) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation arg0) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation arg0) {
-                EditText editText = (EditText) finalv.findViewById(R.id.msg_box);
-                String msg_text = editText.getText().toString();
-
-                /*
-                // send message
-                String[] params = {msg_text,"12"};
-                NetworkTask network_task = new NetworkTask("send_msg", params);
-                String[] resp = new String[0];
-                try {
-                    resp = network_task.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
+        // receive message
+        String[] params = {"11"};
+        NetworkTask network_task = new NetworkTask("receive_msg", params);
+        String[] resp_temp = new String[0];
+        try {
+            resp_temp = network_task.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        final String[] resp = resp_temp;
+        if (resp.length > 0) {
+            arrive.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation arg0) {
+                    EditText editText = (EditText) finalv.findViewById(R.id.anim_msg_box);
+                    editText.setText(resp[0]);
                 }
-                */
-            }
-        });
 
-        v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
-        v.findViewById(R.id.msg_box).startAnimation(move_down);
-        v.findViewById(R.id.anim_msg_box).startAnimation(arrive);
-        v.findViewById(R.id.anim_msg_box).setVisibility(View.INVISIBLE);
+                @Override
+                public void onAnimationRepeat(Animation arg0) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation arg0) {
+                    EditText editText = (EditText) finalv.findViewById(R.id.msg_box);
+                    String msg_text = editText.getText().toString();
+                }
+            });
+            v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
+            v.findViewById(R.id.msg_box).startAnimation(move_down);
+            v.findViewById(R.id.anim_msg_box).startAnimation(arrive);
+            v.findViewById(R.id.anim_msg_box).setVisibility(View.INVISIBLE);
+        }
     }
 
     public static void sendMsgAnimation(View v) {
@@ -246,6 +249,9 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
             }
         });
+
+        EditText anim_edit_text = (EditText) v.findViewById(R.id.anim_msg_box);
+        anim_edit_text.setText("");
 
         v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
         v.findViewById(R.id.msg_box).startAnimation(move_up);
