@@ -163,6 +163,47 @@ public class MainActivity extends AppCompatActivity {
         v.findViewById(R.id.add_friend_dialog).startAnimation(shake);
     }
 
+    public static void receiveMsgAnimation(View v, int section_num) {
+        final View finalv = v;
+        Animation move_down = AnimationUtils.loadAnimation(v.getContext(), R.anim.move_down);
+        Animation arrive = AnimationUtils.loadAnimation(v.getContext(), R.anim.arrive);
+
+        arrive.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation arg0) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation arg0) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation arg0) {
+                EditText editText = (EditText) finalv.findViewById(R.id.msg_box);
+                String msg_text = editText.getText().toString();
+
+                /*
+                // send message
+                String[] params = {msg_text,"12"};
+                NetworkTask network_task = new NetworkTask("send_msg", params);
+                String[] resp = new String[0];
+                try {
+                    resp = network_task.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                */
+            }
+        });
+
+        v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
+        v.findViewById(R.id.msg_box).startAnimation(move_down);
+        v.findViewById(R.id.anim_msg_box).startAnimation(arrive);
+        v.findViewById(R.id.anim_msg_box).setVisibility(View.INVISIBLE);
+    }
+
     public static void sendMsgAnimation(View v) {
         final View finalv = v;
         Animation move_up = AnimationUtils.loadAnimation(v.getContext(), R.anim.move_up);

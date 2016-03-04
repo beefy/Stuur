@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.stuur.stuur.R;
 
 import static com.stuur.stuur.MainActivity.onCreateDialog;
+import static com.stuur.stuur.MainActivity.receiveMsgAnimation;
 
 
 /**
@@ -134,6 +135,8 @@ public class PlaceholderFragment extends Fragment {
                 }
             });
         }
+
+        receiveMsgAnimation(rootView,section_num);
 
         return rootView;
     }
