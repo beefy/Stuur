@@ -2,6 +2,7 @@ package com.stuur.stuur;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.provider.Settings.Secure;
 import android.support.v4.app.Fragment;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -59,6 +60,8 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
+        //unique(?) phone id, temporarily in the first friends list position
+        String android_id = Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);
         String[] page_title = {"Settings","Friend List","Friends","Local","Global"};
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         TextView textView = (TextView) rootView.findViewById(R.id.section_label);
@@ -79,7 +82,8 @@ public class PlaceholderFragment extends Fragment {
             add_friend_btn.setVisibility(rootView.VISIBLE);
             MainActivity.hideKeyboard(getActivity());
 
-            final String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
+            //friends[0] used to be "bob"
+            final String[] friends = {android_id,"george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
             final String[] keys = {"5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW"};
 
             // friends
