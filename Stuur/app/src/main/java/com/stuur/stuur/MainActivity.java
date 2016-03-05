@@ -3,18 +3,14 @@ package com.stuur.stuur;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
-
+import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -22,13 +18,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.stuur.stuur.R;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
     public static boolean init = true;
+    public static ArrayList<String> remaining_messages = new ArrayList<String>();
+    public static boolean ongoing_animation = false;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -171,23 +169,31 @@ public class MainActivity extends AppCompatActivity {
         Animation arrive = AnimationUtils.loadAnimation(v.getContext(), R.anim.arrive);
 
         // receive message
-        String[] params = {"11"};
+        String[] params = {"12"};
         NetworkTask network_task = new NetworkTask("receive_msg", params);
-        String[] resp_temp = new String[0];
+        String[] resp = new String[0];
         try {
-            resp_temp = network_task.execute().get();
+            resp = network_task.execute().get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        final String[] resp = resp_temp;
-        if (resp.length > 0) {
+        remaining_messages = new ArrayList( Arrays.asList( resp ) );
+        EditText reg_editText = (EditText) finalv.findViewById(R.id.msg_box);
+        if (remaining_messages.size() > 0 & !ongoing_animation) {
             arrive.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation arg0) {
-                    EditText editText = (EditText) finalv.findViewById(R.id.anim_msg_box);
-                    editText.setText(resp[0]);
+                    // I don't know why we need this if statement, but
+                    // without it, the app crashes on build
+                    if(remaining_messages.size() > 0) {
+                        EditText anim_editText = (EditText) finalv.findViewById(R.id.anim_msg_box);
+                        String message = remaining_messages.get(0);
+                        anim_editText.setText(message);
+                        remaining_messages.remove(0);
+                        ongoing_animation = true;
+                    }
                 }
 
                 @Override
@@ -196,10 +202,37 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onAnimationEnd(Animation arg0) {
-                    EditText editText = (EditText) finalv.findViewById(R.id.msg_box);
-                    String msg_text = editText.getText().toString();
+                    EditText anim_editText = (EditText) finalv.findViewById(R.id.anim_msg_box);
+                    EditText reg_editText = (EditText) finalv.findViewById(R.id.msg_box);
+                    reg_editText.setText(anim_editText.getText());
+                    ongoing_animation = false;
                 }
             });
+            v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
+            v.findViewById(R.id.msg_box).startAnimation(move_down);
+            v.findViewById(R.id.anim_msg_box).startAnimation(arrive);
+            v.findViewById(R.id.anim_msg_box).setVisibility(View.INVISIBLE);
+        } else if(reg_editText.getText().length() > 0 & !ongoing_animation){
+            arrive.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation arg0) {
+                    EditText anim_editText = (EditText) finalv.findViewById(R.id.anim_msg_box);
+                    anim_editText.setText("");
+                    ongoing_animation = true;
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation arg0) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation arg0) {
+                    EditText reg_editText = (EditText) finalv.findViewById(R.id.msg_box);
+                    reg_editText.setText("");
+                    ongoing_animation = false;
+                }
+            });
+
             v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
             v.findViewById(R.id.msg_box).startAnimation(move_down);
             v.findViewById(R.id.anim_msg_box).startAnimation(arrive);
@@ -215,6 +248,7 @@ public class MainActivity extends AppCompatActivity {
         replace.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation arg0) {
+                ongoing_animation = true;
             }
 
             @Override
@@ -247,16 +281,20 @@ public class MainActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(finalv.getContext(), text, duration);
                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, -200);
                 toast.show();
+
+                ongoing_animation = false;
             }
         });
 
         EditText anim_edit_text = (EditText) v.findViewById(R.id.anim_msg_box);
         anim_edit_text.setText("");
 
-        v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
-        v.findViewById(R.id.msg_box).startAnimation(move_up);
-        v.findViewById(R.id.anim_msg_box).startAnimation(replace);
-        v.findViewById(R.id.anim_msg_box).setVisibility(View.INVISIBLE);
+        if(!ongoing_animation) {
+            v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
+            v.findViewById(R.id.msg_box).startAnimation(move_up);
+            v.findViewById(R.id.anim_msg_box).startAnimation(replace);
+            v.findViewById(R.id.anim_msg_box).setVisibility(View.INVISIBLE);
+        }
     }
 
     public static void hideKeyboard(Activity activity) {

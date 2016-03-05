@@ -15,7 +15,9 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * Created by Nathaniel on 3/3/2016.
@@ -71,7 +73,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         // encode message
         String encoded_msg = "";
         try {
-            encoded_msg = URLEncoder.encode(msg_text, "UTF-8");
+            encoded_msg = StringEscapeUtils.escapeJava(URLEncoder.encode(msg_text, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return false;
@@ -114,7 +116,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
             JSONArray obj = (JSONArray) new JSONObject(resp).get("content");
             messages = new String[obj.length()];
             for(int i = 0; i < obj.length(); i++) {
-                messages[i] = obj.get(i).toString();
+                messages[i] = StringEscapeUtils.unescapeJava(URLDecoder.decode(obj.get(i).toString(), "UTF-8"));
             }
 
         } catch (IOException e) {
