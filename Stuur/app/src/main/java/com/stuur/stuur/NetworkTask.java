@@ -69,7 +69,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
      * @param sending_id
      * @return true if success, false otherwise
      */
-    public static boolean send_msg(String msg_text, String sending_id) {
+    public static boolean send_msg(String msg_text, String sending_id, String group_name) {
         // encode message
         String encoded_msg = "";
         try {
@@ -80,7 +80,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         }
 
         // send message
-        String parameters = "msg_text=" + encoded_msg + "&sending_id=" + sending_id;
+        String parameters = "msg_text=" + encoded_msg + "&sending_id=" + sending_id + "&group_name=" + group_name;
         String network_call = base_url+port_num+send_msg_endpoint+parameters;
         String resp = "";
         Boolean success = false;
@@ -102,10 +102,10 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         return success;
     }
 
-    public static String[] receive_msg(String receive_id) {
+    public static String[] receive_msg(String receive_id, String group_name) {
 
         // send message
-        String parameters = "receive_id=" + receive_id;
+        String parameters = "receive_id=" + receive_id + "&group_name=" + group_name;
         String network_call = base_url+port_num+receive_msg_endpoint+parameters;
         String resp = "";
         String[] messages;
@@ -134,10 +134,10 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
     protected String[] doInBackground(Void... params) {
         switch(endpoint) {
             case "send_msg":
-                String[] out1 = {toString(send_msg(parameters[0], parameters[1]))};
+                String[] out1 = {toString(send_msg(parameters[0], parameters[1], parameters[2]))};
                 return out1;
             case "receive_msg":
-                String[] out2 = receive_msg(parameters[0]);
+                String[] out2 = receive_msg(parameters[0], parameters[1]);
                 return out2;
             default:
                 break;

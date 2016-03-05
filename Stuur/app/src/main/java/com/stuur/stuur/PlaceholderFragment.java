@@ -23,6 +23,7 @@ import com.stuur.stuur.R;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import static com.stuur.stuur.MainActivity.cur_group_name;
 import static com.stuur.stuur.MainActivity.onCreateDialog;
 import static com.stuur.stuur.MainActivity.receiveMsgAnimation;
 
@@ -123,6 +124,10 @@ public class PlaceholderFragment extends Fragment {
 
         } else {
 
+            if(section_num == 2) cur_group_name = "friends";
+            else if(section_num == 3) cur_group_name = "local";
+            else cur_group_name = "global";
+
             receiveMsgAnimation(rootView);
 
             msg_box.setVisibility(rootView.VISIBLE);
@@ -131,9 +136,9 @@ public class PlaceholderFragment extends Fragment {
             msg_box.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if( keyCode == KeyEvent.KEYCODE_ENTER ) {
-                        if( event.getAction() == KeyEvent.ACTION_UP ) {
-                            if(msg_box.getText().length() == 0) {
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                        if (event.getAction() == KeyEvent.ACTION_UP) {
+                            if (msg_box.getText().length() == 0) {
                                 MainActivity.shakeMsgBox(rootView);
                             } else {
                                 MainActivity.sendMsgAnimation(rootView);
@@ -144,6 +149,17 @@ public class PlaceholderFragment extends Fragment {
                     return false;
                 }
             });
+
+            // click message to see next message
+            /*
+            msg_box.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    receiveMsgAnimation(v, final_group_name);
+                }
+            });
+            */
 
             // click screen to see next message
             RelativeLayout rlayout = (RelativeLayout) rootView.findViewById(R.id.fragmentxml);

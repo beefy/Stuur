@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean init = true;
     public static ArrayList<String> remaining_messages = new ArrayList<String>();
     public static boolean ongoing_animation = false;
+    public static String cur_group_name = "";
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -169,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
         Animation arrive = AnimationUtils.loadAnimation(v.getContext(), R.anim.arrive);
 
         // receive message
-        String[] params = {"12"};
+        String[] params = {"12",cur_group_name};
         NetworkTask network_task = new NetworkTask("receive_msg", params);
         String[] resp = new String[0];
         try {
@@ -182,12 +183,13 @@ public class MainActivity extends AppCompatActivity {
         remaining_messages = new ArrayList( Arrays.asList( resp ) );
         EditText reg_editText = (EditText) finalv.findViewById(R.id.msg_box);
         if (remaining_messages.size() > 0 & !ongoing_animation) {
+            hideKeyboard((Activity) v.getContext());
             arrive.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation arg0) {
                     // I don't know why we need this if statement, but
                     // without it, the app crashes on build
-                    if(remaining_messages.size() > 0) {
+                    if (remaining_messages.size() > 0) {
                         EditText anim_editText = (EditText) finalv.findViewById(R.id.anim_msg_box);
                         String message = remaining_messages.get(0);
                         anim_editText.setText(message);
@@ -261,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
                 String msg_text = editText.getText().toString();
 
                 // send message
-                String[] params = {msg_text,"12"};
+                String[] params = {msg_text,"12", cur_group_name};
                 NetworkTask network_task = new NetworkTask("send_msg", params);
                 String[] resp = new String[0];
                 try {
