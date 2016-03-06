@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">Stuur</string>
-    <string name="section_format">%1$d</string>
-    <string name="msg_hint">Tell someone something</string>
-</resources>
