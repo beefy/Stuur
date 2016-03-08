@@ -75,19 +75,9 @@
     <ListView
 
         android:id="@+id/friend_list"
-        android:layout_width="225dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
-        android:background="#FFF"/>
-
-
-    <ListView
-
-        android:id="@+id/key_list"
-        android:layout_width="125dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:layout_marginLeft="225dp"
         android:background="#FFF"/>
 
 </RelativeLayout>

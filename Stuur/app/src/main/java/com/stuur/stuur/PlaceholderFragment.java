@@ -102,27 +102,11 @@ public class PlaceholderFragment extends Fragment {
             final String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
             final String[] keys = {"5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW"};
 
-            // friends
-            ArrayAdapter<String> friends_Adapter =
-                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, friends);
+            // friends list
             final ListView friends_listView = (ListView) rootView.findViewById(R.id.friend_list);
-            friends_listView.setAdapter(friends_Adapter);
+            CustomList adapter = new CustomList(getActivity(), friends, keys);
+            friends_listView.setAdapter(adapter);
             friends_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String selected_nick = friends[position];
-                    String selected_key = keys[position];
-                    Dialog dialog = MainActivity.onCreateDialog(savedInstanceState, view, selected_nick, selected_key);
-                    dialog.show();
-                }
-            });
-
-            // keys
-            ArrayAdapter<String> keys_Adapter =
-                    new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, keys);
-            ListView keys_listView = (ListView) rootView.findViewById(R.id.key_list);
-            keys_listView.setAdapter(keys_Adapter);
-            keys_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String selected_nick = friends[position];
