@@ -3,9 +3,11 @@ package com.stuur.stuur;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -38,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<String> remaining_messages_local = new ArrayList<String>();
     public static boolean ongoing_animation = false;
     public static String cur_group_name = "friends";
+    public static String android_id;
+    public static String user_key;
+    public static String user_id;
 
     public static String[] emoji_basic = {
             "\uDE00","\uDE01","\uDE02","\uDE03","\uDE04","\uDE05","\uDE06","\uDE07","\uDE08","\uDE09","\uDE0A","\uDE0B","\uDE0C","\uDE0D","\uDE0D","\uDE0E","\uDE0F",
@@ -75,14 +80,6 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(2);
 
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
-                check_new_messages(activeView);
-            }
-        }, 0, 5000);
-
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -106,6 +103,29 @@ public class MainActivity extends AppCompatActivity {
                 },100);
             }
         });
+
+        //unique(?) phone id, temporarily in the first friends list position
+        android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+
+        // get user_key
+        String[] params = {android_id};
+        NetworkTask network_task = new NetworkTask("create_user", params);
+        String[] resp_status = new String[0];
+        try {
+            resp_status = network_task.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                check_new_messages(activeView);
+            }
+        }, 0, 5000);
 
         // set status/notification bar transparent
         // only works for newer android versions
@@ -225,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 */
 
                 // GET FRIEND MESSAGES
-                String[] params_friends = {"11","friends"};
+                String[] params_friends = {user_id,"friends"};
                 NetworkTask network_task_friends = new NetworkTask("receive_msg", params_friends);
                 try {
                     String[] resp_status = network_task_friends.execute().get();
@@ -242,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
                 NetworkTask.resp = null;
 
                 // GET LOCAL MESSAGES
-                String[] params_local = {"11","local"};
+                String[] params_local = {user_id,"local"};
                 NetworkTask network_task_local = new NetworkTask("receive_msg", params_local);
                 try {
                     String[] resp_status = network_task_local.execute().get();
@@ -259,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
                 NetworkTask.resp = null;
 
                 // GET GLOBAL MESSAGES
-                String[] params_global = {"11","global"};
+                String[] params_global = {user_id,"global"};
                 NetworkTask network_task_global = new NetworkTask("receive_msg", params_global);
                 try {
                     String[] resp_status = network_task_global.execute().get();
@@ -382,7 +402,7 @@ public class MainActivity extends AppCompatActivity {
                 String msg_text = editText.getText().toString();
 
                 // send message
-                String[] params = {msg_text,"12", cur_group_name};
+                String[] params = {msg_text,user_id, cur_group_name};
                 NetworkTask network_task = new NetworkTask("send_msg", params);
                 String[] resp_status = new String[0];
                 try {

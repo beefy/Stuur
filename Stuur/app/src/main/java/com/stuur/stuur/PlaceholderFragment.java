@@ -30,6 +30,7 @@ import com.stuur.stuur.R;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import static com.stuur.stuur.MainActivity.check_new_messages;
 import static com.stuur.stuur.MainActivity.cur_group_name;
@@ -71,9 +72,26 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
+/*
+        if(init) {
 
-        //unique(?) phone id, temporarily in the first friends list position
-        String android_id = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+            //unique(?) phone id, temporarily in the first friends list position
+            MainActivity.android_id = Settings.Secure.getString(.getContentResolver(), Settings.Secure.ANDROID_ID);
+
+            // get user_key
+            String[] params = {android_id};
+            NetworkTask network_task = new NetworkTask("create_user", params);
+            String[] resp_status = new String[0];
+            try {
+                resp_status = network_task.execute().get();
+                user_key = NetworkTask.resp[0][0];
+                user_id = NetworkTask.resp[0][1];
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }*/
 
         this.container = container;
         this.inflater = inflater;
