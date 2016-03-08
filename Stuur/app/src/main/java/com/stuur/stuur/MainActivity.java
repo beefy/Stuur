@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 NetworkTask.resp = null;
             }
-        }, 0, 5*60*1000);
+        }, 0, 30*60*1000);
 
         // set status/notification bar transparent
         // only works for newer android versions
