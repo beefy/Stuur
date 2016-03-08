@@ -4,7 +4,8 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:weightSum="1"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:background="@android:color/white">
 
     <TextView
         android:id="@+id/dialog_title"
@@ -20,7 +21,8 @@
 
     <LinearLayout android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:background="@android:color/white">
 
         <EditText
             android:id="@+id/nickname"
@@ -48,6 +50,39 @@
             android:fontFamily="sans-serif"
             android:maxLength="5"
             android:hint="User Key"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        style="@android:style/ButtonBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@android:color/white" >
+
+        <Button
+            android:id="@+id/DeleteButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Delete"
+            android:background="@android:color/white" />
+
+        <Button
+            android:id="@+id/UpdateButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Update"
+            android:background="@android:color/white" />
+
+        <Button
+            android:id="@+id/CancelButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:background="@android:color/white" />
 
     </LinearLayout>
 

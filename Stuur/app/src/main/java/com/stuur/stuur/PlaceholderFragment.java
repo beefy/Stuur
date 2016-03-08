@@ -111,8 +111,7 @@ public class PlaceholderFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String selected_nick = friends[position];
                     String selected_key = keys[position];
-                    Dialog dialog = MainActivity.onCreateDialog(savedInstanceState, view, selected_nick, selected_key);
-                    dialog.show();
+                    MainActivity.onCreateDialog(savedInstanceState, view, selected_nick, selected_key);
                 }
             });
 
@@ -120,9 +119,7 @@ public class PlaceholderFragment extends Fragment {
             add_friend_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Dialog dialog = MainActivity.onCreateDialog(savedInstanceState, v);
-                    dialog.show();
-
+                    MainActivity.onCreateDialog(savedInstanceState, v);
                 }
             });
 

@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -21,11 +22,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +40,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
+import java.util.zip.Inflater;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -151,67 +157,87 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
-    public static Dialog onCreateDialog(Bundle savedInstanceState, View v, String nick, String key) {
+    public static void onCreateDialog(Bundle savedInstanceState, View v, String nick, String key) {
 
-        final View vfinal = v;
-        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-        // Get the layout inflater
-        LayoutInflater inflater = LayoutInflater.from(v.getContext());
+        final Dialog dialog = new Dialog(v.getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_add_friend);
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        final View dialogView = inflater.inflate(R.layout.dialog_add_friend, null);
-        builder.setView(dialogView)
-                // Add action buttons
-                .setPositiveButton("Update", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        shakeAddFriendDialog(vfinal);
-                    }
-                })
-                .setNeutralButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // delete the user
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+        final EditText keyText = (EditText) dialog.findViewById(R.id.key);
+        final EditText nickText = (EditText) dialog.findViewById(R.id.nickname);
+        keyText.setText(key);
+        nickText.setText(nick);
 
-        EditText nickname_widget = (EditText) dialogView.findViewById(R.id.nickname);
-        EditText key_widget = (EditText) dialogView.findViewById(R.id.key);
-        TextView title = (TextView) dialogView.findViewById(R.id.dialog_title);
-        nickname_widget.setText(nick);
-        key_widget.setText(key);
-        title.setText("Edit " + nick);
+        dialog.show();
 
-        return builder.create();
+        Button positive = (Button) dialog.findViewById(R.id.UpdateButton);
+        Button negative = (Button) dialog.findViewById(R.id.CancelButton);
+        Button delete = (Button) dialog.findViewById(R.id.DeleteButton);
+        positive.setText("Update");
+        delete.setVisibility(View.VISIBLE);
+
+        TextView dialog_title = (TextView) dialog.findViewById(R.id.dialog_title);
+        dialog_title.setText("Update " + nick);
+
+        positive.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                if (keyText.getText().toString().isEmpty()) {
+                    Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
+                    keyText.startAnimation(shake);
+                    Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    //database.updateAge(Integer.parseInt(ageEditText.getText().toString()));
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        negative.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
-    public static Dialog onCreateDialog(Bundle savedInstanceState, View v) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-        // Get the layout inflater
-        LayoutInflater inflater = LayoutInflater.from(v.getContext());
+    public static void onCreateDialog(Bundle savedInstanceState, View v) {
+        final Dialog dialog = new Dialog(v.getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_add_friend);
 
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.dialog_add_friend, null))
-                // Add action buttons
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // add the user
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        return builder.create();
+        final EditText keyText = (EditText) dialog.findViewById(R.id.key);
+        final EditText nickText = (EditText) dialog.findViewById(R.id.nickname);
+
+        dialog.show();
+
+        Button positive = (Button) dialog.findViewById(R.id.UpdateButton);
+        Button negative = (Button) dialog.findViewById(R.id.CancelButton);
+        Button delete = (Button) dialog.findViewById(R.id.DeleteButton);
+        positive.setText("Add");
+        delete.setText("");
+        delete.setClickable(false);
+
+        TextView dialog_title = (TextView) dialog.findViewById(R.id.dialog_title);
+        dialog_title.setText("Add a Friend");
+
+        positive.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                if (keyText.getText().toString().isEmpty()) {
+                    Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
+                    keyText.startAnimation(shake);
+                    Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
+                } else {
+                    //database.updateAge(Integer.parseInt(ageEditText.getText().toString()));
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        negative.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
     public static void shakeMsgBox(View v) {
@@ -220,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void shakeAddFriendDialog(View v) {
+
         final View finalv = v;
         Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
 
