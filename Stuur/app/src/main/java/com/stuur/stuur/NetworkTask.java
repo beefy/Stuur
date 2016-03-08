@@ -69,13 +69,16 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
 
     /**
      *
-     * @param msg_text
+     * @param in_msg_text
      * @param sending_id
      * @return true if success, false otherwise
      */
-    public static boolean send_msg(String msg_text, String sending_id, String group_name) {
+    public static boolean send_msg(String in_msg_text, String sending_id, String group_name) {
         // encode message
         String encoded_msg = "";
+        String msg_text;
+        if (in_msg_text.contains("'")) msg_text  = in_msg_text.replace("'", "''");
+        else msg_text = in_msg_text;
         try {
             encoded_msg = StringEscapeUtils.escapeJava(URLEncoder.encode(msg_text, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
@@ -121,7 +124,11 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
             JSONArray messages_obj = obj.getJSONArray(0);
             out[0] = new String[messages_obj.length()];
             for(int i = 0; i < messages_obj.length(); i++) {
-                out[0][i] = StringEscapeUtils.unescapeJava(URLDecoder.decode(messages_obj.get(i).toString(), "UTF-8"));
+                String in_msg_text = messages_obj.get(i).toString();
+                String msg_text;
+                if (in_msg_text.contains("''")) msg_text  = in_msg_text.replace("''", "'");
+                else msg_text = in_msg_text;
+                out[0][i] = StringEscapeUtils.unescapeJava(URLDecoder.decode(msg_text, "UTF-8"));
             }
 
             JSONArray profanity_obj = obj.getJSONArray(1);
