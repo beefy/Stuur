@@ -1,13 +1,18 @@
 package com.stuur.stuur;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -45,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
     public static String user_id;
 
     public static String[] emoji_basic = {
-            "\uDE00","\uDE01","\uDE02","\uDE03","\uDE04","\uDE05","\uDE06","\uDE07","\uDE08","\uDE09","\uDE0A","\uDE0B","\uDE0C","\uDE0D","\uDE0D","\uDE0E","\uDE0F",
-            "\uDE10","\uDE11","\uDE12","\uDE13","\uDE14","\uDE15","\uDE16","\uDE17","\uDE18","\uDE19","\uDE1A","\uDE1B","\uDE1C","\uDE1D","\uDE1D","\uDE1E","\uDE1F",
-            "\uDE20","\uDE21","\uDE22","\uDE23","\uDE24","\uDE25","\uDE26","\uDE27","\uDE28","\uDE29","\uDE2A","\uDE2B","\uDE2C","\uDE2D","\uDE2D","\uDE2E","\uDE2F",
-            "\uDE30","\uDE31","\uDE32","\uDE33","\uDE34","\uDE35","\uDE36","\uDE37","\uDE38","\uDE39","\uDE3A","\uDE3B","\uDE3C","\uDE3D","\uDE3D","\uDE3E","\uDE3F",
+            "\uDE00", "\uDE01", "\uDE02", "\uDE03", "\uDE04", "\uDE05", "\uDE06", "\uDE07", "\uDE08", "\uDE09", "\uDE0A", "\uDE0B", "\uDE0C", "\uDE0D", "\uDE0D", "\uDE0E", "\uDE0F",
+            "\uDE10", "\uDE11", "\uDE12", "\uDE13", "\uDE14", "\uDE15", "\uDE16", "\uDE17", "\uDE18", "\uDE19", "\uDE1A", "\uDE1B", "\uDE1C", "\uDE1D", "\uDE1D", "\uDE1E", "\uDE1F",
+            "\uDE20", "\uDE21", "\uDE22", "\uDE23", "\uDE24", "\uDE25", "\uDE26", "\uDE27", "\uDE28", "\uDE29", "\uDE2A", "\uDE2B", "\uDE2C", "\uDE2D", "\uDE2D", "\uDE2E", "\uDE2F",
+            "\uDE30", "\uDE31", "\uDE32", "\uDE33", "\uDE34", "\uDE35", "\uDE36", "\uDE37", "\uDE38", "\uDE39", "\uDE3A", "\uDE3B", "\uDE3C", "\uDE3D", "\uDE3D", "\uDE3E", "\uDE3F",
     };
 
     /**
@@ -100,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                         View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
                         receiveMsgAnimation(activeView);
                     }
-                },100);
+                }, 100);
             }
         });
 
@@ -118,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        
+
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -126,6 +131,39 @@ public class MainActivity extends AppCompatActivity {
                 check_new_messages(activeView);
             }
         }, 0, 5000);
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                LocationManager lm = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                double lng = location.getLongitude();
+                double lat = location.getLatitude();
+
+                //update location
+                String[] params = {user_id, Double.toString(lat), Double.toString(lng)};
+                NetworkTask network_task = new NetworkTask("update_location", params);
+                String[] resp_status = new String[0];
+                try {
+                    resp_status = network_task.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                NetworkTask.resp = null;
+            }
+        }, 0, 5*60*1000);
 
         // set status/notification bar transparent
         // only works for newer android versions

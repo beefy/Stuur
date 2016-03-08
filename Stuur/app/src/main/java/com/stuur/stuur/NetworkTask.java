@@ -44,6 +44,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
     public static String send_msg_endpoint = "/send_msg?";
     public static String receive_msg_endpoint = "/receive_msg?";
     public static String create_user_endpoint = "/create_user?";
+    public static String update_location_endpoint = "/update_location?";
 
     public NetworkTask(String endpoint, String[] parameters) {
         this.endpoint = endpoint;
@@ -167,6 +168,33 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         return out;
     }
 
+    public static String[] update_location(String user_id, String lat, String lng) {
+
+        // send message
+        String parameters = "user_id=" + user_id + "&lat=" + lat + "&lng=" + lng;
+        String network_call = base_url+port_num+update_location_endpoint+parameters;
+        String resp = "";
+        String[] out = new String[2];
+        try {
+            resp = get_website_src(network_call);
+
+            // read response
+            JSONArray obj = (JSONArray) new JSONObject(resp).get("content");
+            for(int i = 0; i < obj.length(); i++) {
+                out[i] = obj.get(i).toString();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return out;
+    }
+
     @Override
     protected String[] doInBackground(Void... params) {
         String[] success = {"success"};
@@ -184,6 +212,10 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 MainActivity.user_key = resp[0][0];
                 MainActivity.user_id = resp[0][1];
                 resp = null;
+                return success;
+            case "update_location":
+                String[][] resp_temp_3 = {update_location(parameters[0],parameters[1],parameters[2])};
+                resp = resp_temp_3;
                 return success;
             default:
                 break;
