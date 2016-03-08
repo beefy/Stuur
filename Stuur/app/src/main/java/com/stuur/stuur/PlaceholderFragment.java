@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.stuur.stuur.R;
 
+import org.w3c.dom.Text;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
@@ -87,16 +88,20 @@ public class PlaceholderFragment extends Fragment {
         // hide/show contents for seperate pages
         final EditText msg_box = (EditText) rootView.findViewById(R.id.msg_box);
         Button add_friend_btn = (Button) rootView.findViewById(R.id.add_friend_btn);
+        TextView stuur_key_txt = (TextView) rootView.findViewById(R.id.stuur_key_txt);
         rootView.setTag("view" + section_num);
         if(section_num == 0) {
             // settings page
             msg_box.setVisibility(rootView.GONE);
             add_friend_btn.setVisibility(rootView.GONE);
+            stuur_key_txt.setVisibility(rootView.VISIBLE);
+            stuur_key_txt.setText("Your stuur key: " + MainActivity.user_key);
             MainActivity.hideKeyboard(getActivity());
         } else if(section_num == 1) {
             // friend list page
             msg_box.setVisibility(rootView.GONE);
             add_friend_btn.setVisibility(rootView.VISIBLE);
+            stuur_key_txt.setVisibility(rootView.GONE);
             MainActivity.hideKeyboard(getActivity());
 
             final String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
@@ -126,6 +131,7 @@ public class PlaceholderFragment extends Fragment {
         } else {
             msg_box.setVisibility(rootView.VISIBLE);
             add_friend_btn.setVisibility(rootView.GONE);
+            stuur_key_txt.setVisibility(rootView.GONE);
 
             msg_box.setOnKeyListener(new View.OnKeyListener() {
                 @Override

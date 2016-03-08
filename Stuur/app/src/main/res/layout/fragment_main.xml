@@ -18,6 +18,14 @@
         android:layout_marginTop="-12dp"
         android:layout_weight="100" />
 
+    <TextView
+        android:id="@+id/stuur_key_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:textSize="25dp"/>
+
     <com.stuur.stuur.ActionEditText
         android:id="@+id/msg_box"
         android:paddingTop="15dp"
