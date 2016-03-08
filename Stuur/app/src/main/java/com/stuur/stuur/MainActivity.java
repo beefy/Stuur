@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     public static String android_id;
     public static String user_key;
     public static String user_id;
+    public static LocationManager locationManager;
+    public static boolean init_checked_location = false;
 
     public static String[] emoji_basic = {
             "\uDE00", "\uDE01", "\uDE02", "\uDE03", "\uDE04", "\uDE05", "\uDE06", "\uDE07", "\uDE08", "\uDE09", "\uDE0A", "\uDE0B", "\uDE0C", "\uDE0D", "\uDE0D", "\uDE0E", "\uDE0F",
@@ -132,38 +134,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 0, 5000);
 
+        locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                LocationManager lm = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
-                if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                double lng = location.getLongitude();
-                double lat = location.getLatitude();
-
-                //update location
-                String[] params = {user_id, Double.toString(lat), Double.toString(lng)};
-                NetworkTask network_task = new NetworkTask("update_location", params);
-                String[] resp_status = new String[0];
-                try {
-                    resp_status = network_task.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-                NetworkTask.resp = null;
+                update_location(getApplicationContext());
             }
-        }, 0, 30*60*1000);
+        }, 0, 30 * 60 * 1000);
 
         // set status/notification bar transparent
         // only works for newer android versions
@@ -268,6 +245,34 @@ public class MainActivity extends AppCompatActivity {
         v.findViewById(R.id.add_friend_dialog).startAnimation(shake);
     }
 
+    public static void update_location(Context context) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        double lng = location.getLongitude();
+        double lat = location.getLatitude();
+
+        String[] params = {user_id, Double.toString(lat), Double.toString(lng)};
+        NetworkTask network_task = new NetworkTask("update_location", params);
+        String[] resp_status = new String[0];
+        try {
+            resp_status = network_task.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        init_checked_location = true;
+    }
+
     public static void check_new_messages(View v) {
         // to impact UI thread as little as possible
         //new Thread() {
@@ -300,21 +305,23 @@ public class MainActivity extends AppCompatActivity {
                 NetworkTask.resp = null;
 
                 // GET LOCAL MESSAGES
-                String[] params_local = {user_id,"local"};
-                NetworkTask network_task_local = new NetworkTask("receive_msg", params_local);
-                try {
-                    String[] resp_status = network_task_local.execute().get();
-                    if(resp_status[0] != "success") return;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
+                //if(!(ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                    String[] params_local = {user_id, "local"};
+                    NetworkTask network_task_local = new NetworkTask("receive_msg", params_local);
+                    try {
+                        String[] resp_status = network_task_local.execute().get();
+                        if (resp_status[0] != "success") return;
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
 
-                for(int i = 0; i < NetworkTask.resp[0].length; i++) {
-                    remaining_messages_local.add(censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
-                }
-                NetworkTask.resp = null;
+                    for (int i = 0; i < NetworkTask.resp[0].length; i++) {
+                        remaining_messages_local.add(censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                    }
+                    NetworkTask.resp = null;
+                //}
 
                 // GET GLOBAL MESSAGES
                 String[] params_global = {user_id,"global"};

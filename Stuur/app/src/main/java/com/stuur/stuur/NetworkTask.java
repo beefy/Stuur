@@ -216,6 +216,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
             case "update_location":
                 String[][] resp_temp_3 = {update_location(parameters[0],parameters[1],parameters[2])};
                 resp = resp_temp_3;
+                resp = null;
                 return success;
             default:
                 break;

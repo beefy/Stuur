@@ -82,6 +82,8 @@ public class PlaceholderFragment extends Fragment {
         int section_num = getArguments().getInt(ARG_SECTION_NUMBER)-1;
         textView.setText(page_title[section_num]);
 
+        if(!MainActivity.init_checked_location) MainActivity.update_location(rootView.getContext());
+
         // hide/show contents for seperate pages
         final EditText msg_box = (EditText) rootView.findViewById(R.id.msg_box);
         Button add_friend_btn = (Button) rootView.findViewById(R.id.add_friend_btn);
