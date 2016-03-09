@@ -89,19 +89,27 @@ public class PlaceholderFragment extends Fragment {
         final EditText msg_box = (EditText) rootView.findViewById(R.id.msg_box);
         Button add_friend_btn = (Button) rootView.findViewById(R.id.add_friend_btn);
         TextView stuur_key_txt = (TextView) rootView.findViewById(R.id.stuur_key_txt);
+        ListView settings_list = (ListView) rootView.findViewById(R.id.settings_list);
         rootView.setTag("view" + section_num);
         if(section_num == 0) {
             // settings page
             msg_box.setVisibility(rootView.GONE);
             add_friend_btn.setVisibility(rootView.GONE);
             stuur_key_txt.setVisibility(rootView.VISIBLE);
-            stuur_key_txt.setText("Your stuur key: " + MainActivity.user_key);
+            settings_list.setVisibility(rootView.VISIBLE);
             MainActivity.hideKeyboard(getActivity());
+
+            stuur_key_txt.setText("Your stuur key: " + MainActivity.user_key);
+            final String[] settings = {"Setting 1", "Setting 2", "Setting 3", "Setting 4"};
+            CheckBoxList adapter = new CheckBoxList(getActivity(), settings);
+            settings_list.setAdapter(adapter);
+
         } else if(section_num == 1) {
             // friend list page
             msg_box.setVisibility(rootView.GONE);
             add_friend_btn.setVisibility(rootView.VISIBLE);
             stuur_key_txt.setVisibility(rootView.GONE);
+            settings_list.setVisibility(rootView.GONE);
             MainActivity.hideKeyboard(getActivity());
 
             final String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
@@ -132,6 +140,7 @@ public class PlaceholderFragment extends Fragment {
             msg_box.setVisibility(rootView.VISIBLE);
             add_friend_btn.setVisibility(rootView.GONE);
             stuur_key_txt.setVisibility(rootView.GONE);
+            settings_list.setVisibility(rootView.GONE);
 
             msg_box.setOnKeyListener(new View.OnKeyListener() {
                 @Override

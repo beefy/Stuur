@@ -88,4 +88,12 @@
         android:layout_marginTop="150dp"
         android:background="#FFF"/>
 
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/settings_list"
+        android:layout_marginTop="250dp"
+        android:background="#FFF"
+        />
+
 </RelativeLayout>
