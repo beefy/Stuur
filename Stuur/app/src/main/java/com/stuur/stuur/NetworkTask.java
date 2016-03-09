@@ -45,6 +45,9 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
     public static String receive_msg_endpoint = "/receive_msg?";
     public static String create_user_endpoint = "/create_user?";
     public static String update_location_endpoint = "/update_location?";
+    public static String get_friends_endpoint = "/get_friend?";
+    public static String delete_friend_endpoint = "/delete_friend?";
+    public static String add_friend_endpoint = "/add_friend?";
 
     public NetworkTask(String endpoint, String[] parameters) {
         this.endpoint = endpoint;
@@ -177,9 +180,86 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
 
     public static String[] update_location(String user_id, String lat, String lng) {
 
-        // send message
         String parameters = "user_id=" + user_id + "&lat=" + lat + "&lng=" + lng;
         String network_call = base_url+port_num+update_location_endpoint+parameters;
+        String resp = "";
+        String[] out = new String[2];
+        try {
+            resp = get_website_src(network_call);
+
+            // read response
+            JSONArray obj = (JSONArray) new JSONObject(resp).get("content");
+            for(int i = 0; i < obj.length(); i++) {
+                out[i] = obj.get(i).toString();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return out;
+    }
+
+    public static String[] get_friends(String user_id) {
+
+        String parameters = "user_id=" + user_id;
+        String network_call = base_url+port_num+get_friends_endpoint+parameters;
+        String resp = "";
+        String[] out = new String[2];
+        try {
+            resp = get_website_src(network_call);
+
+            // read response
+            JSONArray obj = (JSONArray) new JSONObject(resp).get("content");
+            for(int i = 0; i < obj.length(); i++) {
+                out[i] = obj.get(i).toString();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return out;
+    }
+
+    public static String[] add_friend(String user_id, String user_key) {
+
+        String parameters = "user_id=" + user_id + "&user_key=" + user_key;
+        String network_call = base_url+port_num+add_friend_endpoint+parameters;
+        String resp = "";
+        String[] out = new String[2];
+        try {
+            resp = get_website_src(network_call);
+
+            // read response
+            JSONArray obj = (JSONArray) new JSONObject(resp).get("content");
+            for(int i = 0; i < obj.length(); i++) {
+                out[i] = obj.get(i).toString();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return out;
+    }
+
+    public static String[] delete_friend(String user_id, String user_key) {
+
+        String parameters = "user_id=" + user_id + "&user_key=" + user_key;
+        String network_call = base_url+port_num+delete_friend_endpoint+parameters;
         String resp = "";
         String[] out = new String[2];
         try {
@@ -224,6 +304,18 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 String[][] resp_temp_3 = {update_location(parameters[0],parameters[1],parameters[2])};
                 resp = resp_temp_3;
                 resp = null;
+                return success;
+            case "get_friends":
+                String [][] resp_temp_4  = {get_friends(parameters[0])};
+                resp = resp_temp_4;
+                return success;
+            case "add_friend":
+                String [][] resp_temp_5 = {add_friend(parameters[0], parameters[1])};
+                resp = resp_temp_5;
+                return success;
+            case "delete_friend":
+                String [][] resp_temp_6 = {delete_friend(parameters[0], parameters[1])};
+                resp = resp_temp_6;
                 return success;
             default:
                 break;
