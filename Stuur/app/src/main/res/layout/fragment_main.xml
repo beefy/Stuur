@@ -78,12 +78,13 @@
         android:layout_height="wrap_content"
         android:layout_width="350dp"
         android:layout_marginTop="75dp"
+        android:layout_centerHorizontal="true"
         android:text="Add Friend" />
 
     <ListView
 
         android:id="@+id/friend_list"
-        android:layout_width="350dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
         android:background="#FFF"/>
@@ -91,8 +92,16 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/settings_list"
-        android:layout_marginTop="250dp"
+        android:id="@+id/censor_weight_list"
+        android:layout_marginTop="150dp"
+        android:background="#FFF"
+        />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/censor_type_list"
+        android:layout_marginTop="375dp"
         android:background="#FFF"
         />
 

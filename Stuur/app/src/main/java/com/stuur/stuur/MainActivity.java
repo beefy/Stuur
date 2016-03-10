@@ -28,9 +28,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -198,6 +202,51 @@ public class MainActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+
+    public static void onChangeCheckbox(Bundle savedInstanceState, View v, CheckBox checkBox, String flag){
+
+        boolean isChecked = checkBox.isChecked();
+
+        if (flag.equals("weight") && !isChecked){
+
+
+            ListView list = (ListView) v.findViewById(R.id.censor_weight_list);
+            removeAllChecks(list);
+
+            checkBox.setChecked(true);
+            //Toast toast = Toast.makeText(v.getContext(), "Censor weight is " + censor_weight, Toast.LENGTH_SHORT);
+            //toast.show();
+        } else if (flag.equals("type") && !isChecked){
+
+            ListView list = (ListView) v.findViewById(R.id.censor_type_list);
+            removeAllChecks(list);
+
+
+            checkBox.setChecked(true);
+            //Toast toast = Toast.makeText(v.getContext(), "Censor type is " + censor_type, Toast.LENGTH_SHORT);
+            //toast.show();
+        }
+
+    }
+
+    public static void removeAllChecks(ViewGroup vg) {
+        View v = null;
+        for(int i = 0; i < vg.getChildCount(); i++){
+            try {
+                v = vg.getChildAt(i);
+                ((CheckBox)v).setChecked(false);
+            }
+            catch(Exception e1){ //if not checkBox, null View, etc
+                try {
+                    removeAllChecks((ViewGroup)v);
+                }
+                catch(Exception e2){ //v is not a view group
+                    continue;
+                }
+            }
+        }
+
     }
 
     public static void onCreateDialog(Bundle savedInstanceState, View v) {

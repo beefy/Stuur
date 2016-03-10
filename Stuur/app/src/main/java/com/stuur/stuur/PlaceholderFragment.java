@@ -18,6 +18,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -89,27 +91,83 @@ public class PlaceholderFragment extends Fragment {
         final EditText msg_box = (EditText) rootView.findViewById(R.id.msg_box);
         Button add_friend_btn = (Button) rootView.findViewById(R.id.add_friend_btn);
         TextView stuur_key_txt = (TextView) rootView.findViewById(R.id.stuur_key_txt);
-        ListView settings_list = (ListView) rootView.findViewById(R.id.settings_list);
+        ListView weight_list = (ListView) rootView.findViewById(R.id.censor_weight_list);
+        final ListView type_list = (ListView) rootView.findViewById(R.id.censor_type_list);
         rootView.setTag("view" + section_num);
         if(section_num == 0) {
             // settings page
             msg_box.setVisibility(rootView.GONE);
             add_friend_btn.setVisibility(rootView.GONE);
             stuur_key_txt.setVisibility(rootView.VISIBLE);
-            settings_list.setVisibility(rootView.VISIBLE);
+            weight_list.setVisibility(rootView.VISIBLE);
+            type_list.setVisibility(rootView.VISIBLE);
             MainActivity.hideKeyboard(getActivity());
 
             stuur_key_txt.setText("Your stuur key: " + MainActivity.user_key);
-            final String[] settings = {"Setting 1", "Setting 2", "Setting 3", "Setting 4"};
-            CheckBoxList adapter = new CheckBoxList(getActivity(), settings);
-            settings_list.setAdapter(adapter);
+
+            final String[] weights = {"Full Censor", "Partial Censor", "No Censor"};
+            final String[] types = {"Grawlix Censor", "Emoji Censor", "Star Censor"};
+
+            CheckBoxList adapter_weights = new CheckBoxList(getActivity(), weights);
+            weight_list.setAdapter(adapter_weights);
+            weight_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position){
+                        case 0:
+                            MainActivity.censor_weight = "full";
+                            type_list.setVisibility(rootView.VISIBLE);
+                            break;
+                        case 1:
+                            MainActivity.censor_weight = "partial";
+                            type_list.setVisibility(rootView.VISIBLE);
+                            break;
+                        case 2:
+                            MainActivity.censor_weight = "none";
+                            type_list.setVisibility(rootView.GONE);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    String flag = "weight";
+                    CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+                    MainActivity.onChangeCheckbox(savedInstanceState, rootView, checkBox, flag);
+                }
+            });
+
+            CheckBoxList adapter_types = new CheckBoxList(getActivity(), types);
+            type_list.setAdapter(adapter_types);
+            type_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position){
+                        case 0:
+                            MainActivity.censor_type = "grawlix";
+                            break;
+                        case 1:
+                            MainActivity.censor_type = "emoji";
+                            break;
+                        case 2:
+                            MainActivity.censor_type = "star";
+                            break;
+                        default:
+                            break;
+                    }
+
+                    String flag = "type";
+                    CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+                    MainActivity.onChangeCheckbox(savedInstanceState, rootView, checkBox, flag);
+                }
+            });
 
         } else if(section_num == 1) {
             // friend list page
             msg_box.setVisibility(rootView.GONE);
             add_friend_btn.setVisibility(rootView.VISIBLE);
             stuur_key_txt.setVisibility(rootView.GONE);
-            settings_list.setVisibility(rootView.GONE);
+            weight_list.setVisibility(rootView.GONE);
+            type_list.setVisibility(rootView.GONE);
             MainActivity.hideKeyboard(getActivity());
 
             final String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
@@ -140,7 +198,8 @@ public class PlaceholderFragment extends Fragment {
             msg_box.setVisibility(rootView.VISIBLE);
             add_friend_btn.setVisibility(rootView.GONE);
             stuur_key_txt.setVisibility(rootView.GONE);
-            settings_list.setVisibility(rootView.GONE);
+            weight_list.setVisibility(rootView.GONE);
+            type_list.setVisibility(rootView.GONE);
 
             msg_box.setOnKeyListener(new View.OnKeyListener() {
                 @Override
