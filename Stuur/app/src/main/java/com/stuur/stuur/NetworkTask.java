@@ -82,14 +82,13 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
     public static boolean send_msg(String in_msg_text, String sending_id, String group_name) {
         // encode message
         String encoded_msg = "";
-        String msg_text;
-        if (in_msg_text.contains("'")) msg_text  = in_msg_text.replace("'", "''");
-        else msg_text = in_msg_text;
+        String msg_text = in_msg_text;
+        if (msg_text.contains("'")) msg_text = msg_text.replace("'", "''");
+        if (msg_text.contains("\\")) msg_text = msg_text.replace("\\", "\\\\");
         try {
-            encoded_msg = StringEscapeUtils.escapeJava(URLEncoder.encode(msg_text, "UTF-8"));
+            encoded_msg = URLEncoder.encode(msg_text, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return false;
         }
 
         // send message
@@ -134,7 +133,12 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 String msg_text;
                 if (in_msg_text.contains("''")) msg_text  = in_msg_text.replace("''", "'");
                 else msg_text = in_msg_text;
-                out[0][i] = StringEscapeUtils.unescapeJava(URLDecoder.decode(msg_text, "UTF-8"));
+                //out[0][i] = StringEscapeUtils.unescapeJava(msg_text);
+                try {
+                    out[0][i] = StringEscapeUtils.unescapeJava(URLDecoder.decode(msg_text, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
 
             JSONArray profanity_obj = obj.getJSONArray(1);
@@ -326,7 +330,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 }
                 MainActivity.friend_keys = temp.toArray(new String[temp.size()]);
                 String[] friend_nicks_default = new String[MainActivity.friend_keys.length];
-                if(MainActivity.friend_keys[0] == null) {
+                if(MainActivity.friend_keys.length > 0 && MainActivity.friend_keys[0] == null) {
                     friend_nicks_default = new String[0];
                 } else {
                     for (int i = 0; i < friend_nicks_default.length; i++) {

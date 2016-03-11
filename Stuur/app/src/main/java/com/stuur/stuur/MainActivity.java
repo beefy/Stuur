@@ -607,6 +607,7 @@ public class MainActivity extends AppCompatActivity {
             arrive.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation arg0) {
+
                     reg_editText.setFocusable(false);
                     mViewPager.setPagingEnabled(false);
 
