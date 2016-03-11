@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -71,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
             "\uDE20", "\uDE21", "\uDE22", "\uDE23", "\uDE24", "\uDE25", "\uDE26", "\uDE27", "\uDE28", "\uDE29", "\uDE2A", "\uDE2B", "\uDE2C", "\uDE2D", "\uDE2D", "\uDE2E", "\uDE2F",
             "\uDE30", "\uDE31", "\uDE32", "\uDE33", "\uDE34", "\uDE35", "\uDE36", "\uDE37", "\uDE38", "\uDE39", "\uDE3A", "\uDE3B", "\uDE3C", "\uDE3D", "\uDE3D", "\uDE3E", "\uDE3F",
     };
+
+    //local Database setting info
+    public static final String DEFAULT = "N/A";
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String SETTING_WEIGHT = "censorWeight";
+    public static final String SETTING_TYPE = "censorType";
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -175,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
         */
+        MainActivity.loadType(mViewPager);
+        MainActivity.loadWeight(mViewPager);
     }
 
 
@@ -184,22 +193,15 @@ public class MainActivity extends AppCompatActivity {
 
         if (flag.equals("weight") && !isChecked){
 
-
             ListView list = (ListView) v.findViewById(R.id.censor_weight_list);
             removeAllChecks(list);
-
             checkBox.setChecked(true);
-            //Toast toast = Toast.makeText(v.getContext(), "Censor weight is " + censor_weight, Toast.LENGTH_SHORT);
-            //toast.show();
+
         } else if (flag.equals("type") && !isChecked){
 
             ListView list = (ListView) v.findViewById(R.id.censor_type_list);
             removeAllChecks(list);
-
-
             checkBox.setChecked(true);
-            //Toast toast = Toast.makeText(v.getContext(), "Censor type is " + censor_type, Toast.LENGTH_SHORT);
-            //toast.show();
         }
 
     }
@@ -220,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
     }
 
     // update friend dialog
@@ -819,5 +820,42 @@ public class MainActivity extends AppCompatActivity {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public static void saveWeight(View view, String string){
+        SharedPreferences sharedpreferences;
+        sharedpreferences = view.getContext().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(SETTING_WEIGHT, string);
+        editor.apply();
+    }
+
+    public static void loadWeight(View view){
+
+        SharedPreferences sharedpreferences;
+        sharedpreferences = view.getContext().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        String weight = sharedpreferences.getString(SETTING_WEIGHT, DEFAULT);
+
+        //on startup set to full and grawlix
+        if (weight.equals(DEFAULT)) censor_weight = "full";
+        else censor_weight = weight;
+    }
+
+    public static void saveType(View view, String string){
+        SharedPreferences sharedpreferences;
+        sharedpreferences = view.getContext().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putString(SETTING_TYPE, string);
+        editor.apply();
+    }
+
+    public static void loadType(View view){
+
+        SharedPreferences sharedpreferences;
+        sharedpreferences = view.getContext().getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        String type = sharedpreferences.getString(SETTING_TYPE, DEFAULT);
+
+        if (type.equals(DEFAULT)) censor_type = "grawlix";
+        else censor_type = type;
     }
 }

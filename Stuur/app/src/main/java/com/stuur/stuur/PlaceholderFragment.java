@@ -35,6 +35,8 @@ import org.xmlpull.v1.XmlPullParser;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+import static com.stuur.stuur.MainActivity.censor_type;
+import static com.stuur.stuur.MainActivity.censor_weight;
 import static com.stuur.stuur.MainActivity.check_new_messages;
 import static com.stuur.stuur.MainActivity.cur_group_name;
 import static com.stuur.stuur.MainActivity.onCreateDialog;
@@ -94,8 +96,12 @@ public class PlaceholderFragment extends Fragment {
         ListView weight_list = (ListView) rootView.findViewById(R.id.censor_weight_list);
         final ListView type_list = (ListView) rootView.findViewById(R.id.censor_type_list);
         rootView.setTag("view" + section_num);
+
         if(section_num == 0) {
+
             // settings page
+
+            //set visibilities and hide keyboard
             msg_box.setVisibility(rootView.GONE);
             add_friend_btn.setVisibility(rootView.GONE);
             stuur_key_txt.setVisibility(rootView.VISIBLE);
@@ -105,26 +111,67 @@ public class PlaceholderFragment extends Fragment {
 
             stuur_key_txt.setText("Your stuur key: " + MainActivity.user_key);
 
+            //weight and type lists with chechboxes
             final String[] weights = {"Full Censor", "Partial Censor", "No Censor"};
             final String[] types = {"Grawlix Censor", "Emoji Censor", "Star Censor"};
+            Boolean[] checked_weight = new Boolean[3];
+            Boolean[] checked_type = new Boolean[3];
 
-            CheckBoxList adapter_weights = new CheckBoxList(getActivity(), weights);
+            //find which weight and type are set
+            switch (censor_weight) {
+                case "full":
+                    Boolean[] tempfull = {true, false, false};
+                    checked_weight = tempfull;
+                    break;
+                case "partial":
+                    Boolean[] temppart = {false, true, false};
+                    checked_weight = temppart;
+                    break;
+                case "none":
+                    Boolean[] tempnone = {false, false, true};
+                    checked_weight = tempnone;
+                    break;
+                default:
+                    break;
+            }
+
+            switch (censor_type) {
+                case "grawlix":
+                    Boolean[] tempgraw = {true, false, false};
+                    checked_type = tempgraw;
+                    break;
+                case "emoji":
+                    Boolean[] tempemoji = {false, true, false};
+                    checked_type = tempemoji;
+                    break;
+                case "star":
+                    Boolean[] tempstar = {false, false, true};
+                    checked_type = tempstar;
+                    break;
+                default:
+                    break;
+            }
+
+            CheckBoxList adapter_weights = new CheckBoxList(getActivity(), weights, checked_weight);
             weight_list.setAdapter(adapter_weights);
             weight_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position) {
+                    switch (position){
                         case 0:
                             MainActivity.censor_weight = "full";
                             type_list.setVisibility(rootView.VISIBLE);
+                            MainActivity.saveWeight(view, "full");
                             break;
                         case 1:
                             MainActivity.censor_weight = "partial";
                             type_list.setVisibility(rootView.VISIBLE);
+                            MainActivity.saveWeight(view, "partial");
                             break;
                         case 2:
                             MainActivity.censor_weight = "none";
                             type_list.setVisibility(rootView.GONE);
+                            MainActivity.saveWeight(view, "none");
                             break;
                         default:
                             break;
@@ -136,20 +183,23 @@ public class PlaceholderFragment extends Fragment {
                 }
             });
 
-            CheckBoxList adapter_types = new CheckBoxList(getActivity(), types);
+            CheckBoxList adapter_types = new CheckBoxList(getActivity(), types, checked_type);
             type_list.setAdapter(adapter_types);
             type_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position) {
+                    switch (position){
                         case 0:
                             MainActivity.censor_type = "grawlix";
+                            MainActivity.saveType(view, "grawlix");
                             break;
                         case 1:
                             MainActivity.censor_type = "emoji";
+                            MainActivity.saveType(view, "emoji");
                             break;
                         case 2:
                             MainActivity.censor_type = "star";
+                            MainActivity.saveType(view, "star");
                             break;
                         default:
                             break;
