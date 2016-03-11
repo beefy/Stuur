@@ -113,7 +113,7 @@ public class PlaceholderFragment extends Fragment {
             weight_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position){
+                    switch (position) {
                         case 0:
                             MainActivity.censor_weight = "full";
                             type_list.setVisibility(rootView.VISIBLE);
@@ -141,7 +141,7 @@ public class PlaceholderFragment extends Fragment {
             type_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position){
+                    switch (position) {
                         case 0:
                             MainActivity.censor_type = "grawlix";
                             break;
@@ -170,21 +170,8 @@ public class PlaceholderFragment extends Fragment {
             type_list.setVisibility(rootView.GONE);
             MainActivity.hideKeyboard(getActivity());
 
-            final String[] friends = {"bob","george","sally","bob","george","sally","bob","george","sally","bob","george","sally"};
-            final String[] keys = {"5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW","5FWAS","234SD","WWWWW"};
-
             // friends list
-            final ListView friends_listView = (ListView) rootView.findViewById(R.id.friend_list);
-            CustomList adapter = new CustomList(getActivity(), friends, keys);
-            friends_listView.setAdapter(adapter);
-            friends_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String selected_nick = friends[position];
-                    String selected_key = keys[position];
-                    MainActivity.onCreateDialog(savedInstanceState, view, selected_nick, selected_key);
-                }
-            });
+            MainActivity.refreshFriendsList(rootView, getActivity());
 
             // add friend button
             add_friend_btn.setOnClickListener(new View.OnClickListener() {

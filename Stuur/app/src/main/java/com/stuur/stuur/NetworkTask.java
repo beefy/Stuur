@@ -17,6 +17,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
@@ -45,7 +48,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
     public static String receive_msg_endpoint = "/receive_msg?";
     public static String create_user_endpoint = "/create_user?";
     public static String update_location_endpoint = "/update_location?";
-    public static String get_friends_endpoint = "/get_friend?";
+    public static String get_friends_endpoint = "/get_friends?";
     public static String delete_friend_endpoint = "/delete_friend?";
     public static String add_friend_endpoint = "/add_friend?";
 
@@ -289,9 +292,15 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
             case "send_msg":
                 String[][] resp_temp = {{toString(send_msg(parameters[0], parameters[1], parameters[2]))}};
                 resp = resp_temp;
+                MainActivity.msg_sent_resp = true;
                 return success;
             case "receive_msg":
                 resp = receive_msg(parameters[0], parameters[1]);
+                for(int i = 0; i < NetworkTask.resp[0].length; i++) {
+                    if(parameters[1] == "friends") MainActivity.remaining_messages_friends.add(MainActivity.censor(resp[0][i], resp[1][i]));
+                    if(parameters[1] == "local") MainActivity.remaining_messages_local.add(MainActivity.censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                    if(parameters[1] == "global") MainActivity.remaining_messages_global.add(MainActivity.censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                }
                 return success;
             case "create_user":
                 String[][] resp_temp_2 = {create_user(parameters[0])};
@@ -308,10 +317,28 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
             case "get_friends":
                 String [][] resp_temp_4  = {get_friends(parameters[0])};
                 resp = resp_temp_4;
+                //filter out null values
+                List<String> temp = new ArrayList<String>();
+                for(String s : resp_temp_4[0]) {
+                    if(s != null) {
+                        temp.add(s);
+                    }
+                }
+                MainActivity.friend_keys = temp.toArray(new String[temp.size()]);
+                String[] friend_nicks_default = new String[MainActivity.friend_keys.length];
+                if(MainActivity.friend_keys[0] == null) {
+                    friend_nicks_default = new String[0];
+                } else {
+                    for (int i = 0; i < friend_nicks_default.length; i++) {
+                        friend_nicks_default[i] = "Some Guy";
+                    }
+                }
+                MainActivity.friend_nicks = friend_nicks_default;
                 return success;
             case "add_friend":
                 String [][] resp_temp_5 = {add_friend(parameters[0], parameters[1])};
                 resp = resp_temp_5;
+                MainActivity.friend_added = resp_temp_5[0][0];
                 return success;
             case "delete_friend":
                 String [][] resp_temp_6 = {delete_friend(parameters[0], parameters[1])};

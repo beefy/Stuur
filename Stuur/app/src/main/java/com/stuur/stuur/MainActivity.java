@@ -60,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
     public static String user_id;
     public static LocationManager locationManager;
     public static boolean init_checked_location = false;
+    public static String[] friend_nicks = {"You need some friends, loser"};
+    public static String[] friend_keys = {""};
+    public static boolean msg_sent_resp = false;
+    public static String friend_added = "0";
 
     public static String[] emoji_basic = {
             "\uDE00", "\uDE01", "\uDE02", "\uDE03", "\uDE04", "\uDE05", "\uDE06", "\uDE07", "\uDE08", "\uDE09", "\uDE0A", "\uDE0B", "\uDE0C", "\uDE0D", "\uDE0D", "\uDE0E", "\uDE0F",
@@ -136,6 +140,18 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // get friends
+        String[] params_2 = {MainActivity.user_id};
+        NetworkTask network_task_2 = new NetworkTask("get_friends", params_2);
+        String[] resp_status_2 = new String[0];
+        try {
+            resp_status_2 = network_task_2.execute().get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -161,48 +177,6 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
-    public static void onCreateDialog(Bundle savedInstanceState, View v, String nick, String key) {
-
-        final Dialog dialog = new Dialog(v.getContext());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(R.layout.dialog_add_friend);
-
-        final EditText keyText = (EditText) dialog.findViewById(R.id.key);
-        final EditText nickText = (EditText) dialog.findViewById(R.id.nickname);
-        keyText.setText(key);
-        nickText.setText(nick);
-
-        dialog.show();
-
-        Button positive = (Button) dialog.findViewById(R.id.UpdateButton);
-        Button negative = (Button) dialog.findViewById(R.id.CancelButton);
-        Button delete = (Button) dialog.findViewById(R.id.DeleteButton);
-        positive.setText("Update");
-        delete.setVisibility(View.VISIBLE);
-
-        TextView dialog_title = (TextView) dialog.findViewById(R.id.dialog_title);
-        dialog_title.setText("Update " + nick);
-
-        positive.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                if (keyText.getText().toString().isEmpty()) {
-                    Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
-                    keyText.startAnimation(shake);
-                    Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    //database.updateAge(Integer.parseInt(ageEditText.getText().toString()));
-                    dialog.dismiss();
-                }
-            }
-        });
-
-        negative.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-    }
 
     public static void onChangeCheckbox(Bundle savedInstanceState, View v, CheckBox checkBox, String flag){
 
@@ -249,6 +223,154 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // update friend dialog
+    public static void onCreateDialog(View v, String nick, String key, int position) {
+
+        final String selected_key = key;
+        final String selected_nick = nick;
+        final int final_position = position;
+        final Dialog dialog = new Dialog(v.getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_add_friend);
+
+        final EditText keyText = (EditText) dialog.findViewById(R.id.key);
+        final EditText nickText = (EditText) dialog.findViewById(R.id.nickname);
+        keyText.setText(key);
+        nickText.setText(nick);
+
+        dialog.show();
+
+        Button positive = (Button) dialog.findViewById(R.id.UpdateButton);
+        Button negative = (Button) dialog.findViewById(R.id.CancelButton);
+        Button delete = (Button) dialog.findViewById(R.id.DeleteButton);
+        positive.setText("Update");
+        delete.setVisibility(View.VISIBLE);
+
+        TextView dialog_title = (TextView) dialog.findViewById(R.id.dialog_title);
+        dialog_title.setText("Update " + nick);
+
+        positive.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                if (keyText.getText().toString().isEmpty()) {
+                    Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
+                    keyText.startAnimation(shake);
+                    Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
+                } else {
+
+                    // add friend
+                    String[] params = {MainActivity.user_id, keyText.getText().toString()};
+                    NetworkTask network_task = new NetworkTask("add_friend", params);
+                    String[] resp_status = new String[0];
+                    try {
+                        resp_status = network_task.execute().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(friend_added.equals("1")) {
+                        // add nick to stored preferences....
+                        //
+                        //
+
+                        if(!selected_key.equals(keyText.getText().toString())) {
+                            // delete old friend
+                            String[] params_3 = {MainActivity.user_id, selected_key};
+                            NetworkTask network_task_3 = new NetworkTask("delete_friend", params_3);
+                            String[] resp_status_3 = new String[0];
+                            try {
+                                resp_status_3 = network_task_3.execute().get();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        // refresh friends list
+                        String[] params_2 = {MainActivity.user_id};
+                        NetworkTask network_task_2 = new NetworkTask("get_friends", params_2);
+                        String[] resp_status_2 = new String[0];
+                        try {
+                            resp_status_2 = network_task_2.execute().get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                        Activity host = (Activity) activeView.getContext();
+                        refreshFriendsList(activeView, host);
+
+                        // display toast
+                        Toast toast = Toast.makeText(v.getContext(), "Congrats! " + nickText.getText().toString() + " will make a great friend.", Toast.LENGTH_SHORT);
+                        toast.show();
+
+                        dialog.dismiss();
+                    } else {
+                        // shake key
+                        Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
+                        keyText.startAnimation(shake);
+
+                        // empty key
+                        keyText.setText("");
+
+                        // display toast
+                        Toast toast = Toast.makeText(v.getContext(), "Friend not found :/", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                    friend_added = "0";
+                }
+            }
+        });
+
+        delete.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+
+                // delete friend
+                String[] params = {MainActivity.user_id, selected_key};
+                NetworkTask network_task = new NetworkTask("delete_friend", params);
+                String[] resp_status = new String[0];
+                try {
+                    resp_status = network_task.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
+                // refresh friends list
+                String[] params_2 = {MainActivity.user_id};
+                NetworkTask network_task_2 = new NetworkTask("get_friends", params_2);
+                String[] resp_status_2 = new String[0];
+                try {
+                    resp_status_2 = network_task_2.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                Activity host = (Activity) activeView.getContext();
+                refreshFriendsList(activeView, host);
+
+                // display toast
+                Toast toast = Toast.makeText(v.getContext(), nickText.getText().toString() + " has been deleted", Toast.LENGTH_SHORT);
+                toast.show();
+
+                dialog.dismiss();
+            }
+        });
+
+        negative.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    // add friend dialog
     public static void onCreateDialog(Bundle savedInstanceState, View v) {
         final Dialog dialog = new Dialog(v.getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -276,8 +398,57 @@ public class MainActivity extends AppCompatActivity {
                     keyText.startAnimation(shake);
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
                 } else {
-                    //database.updateAge(Integer.parseInt(ageEditText.getText().toString()));
-                    dialog.dismiss();
+
+                    // add friend
+                    String[] params = {MainActivity.user_id, keyText.getText().toString()};
+                    NetworkTask network_task = new NetworkTask("add_friend", params);
+                    String[] resp_status = new String[0];
+                    try {
+                        resp_status = network_task.execute().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(friend_added.equals("1")) {
+                        // add nick to stored preferences....
+                        //
+                        //
+
+                        // refresh friends list
+                        String[] params_2 = {MainActivity.user_id};
+                        NetworkTask network_task_2 = new NetworkTask("get_friends", params_2);
+                        String[] resp_status_2 = new String[0];
+                        try {
+                            resp_status_2 = network_task_2.execute().get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                        Activity host = (Activity) activeView.getContext();
+                        refreshFriendsList(activeView, host);
+
+                        // display toast
+                        Toast toast = Toast.makeText(v.getContext(), "Congrats! " + nickText.getText().toString() + " will make a great friend.", Toast.LENGTH_SHORT);
+                        toast.show();
+
+                        dialog.dismiss();
+                    } else {
+                        // shake key
+                        Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
+                        keyText.startAnimation(shake);
+
+                        // empty key
+                        keyText.setText("");
+
+                        // display toast
+                        Toast toast = Toast.makeText(v.getContext(), "Friend not found :/", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                    friend_added = "0";
                 }
             }
         });
@@ -285,6 +456,21 @@ public class MainActivity extends AppCompatActivity {
         negative.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 dialog.dismiss();
+            }
+        });
+    }
+
+    public static void refreshFriendsList(View v, Activity a) {
+
+        final ListView friends_listView = (ListView) v.findViewById(R.id.friend_list);
+        CustomList adapter = new CustomList(a, MainActivity.friend_nicks, MainActivity.friend_keys);
+        friends_listView.setAdapter(adapter);
+        friends_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String selected_nick = MainActivity.friend_nicks[position];
+                String selected_key = MainActivity.friend_keys[position];
+                MainActivity.onCreateDialog(view, selected_nick, selected_key, position);
             }
         });
     }
@@ -375,11 +561,6 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                for(int i = 0; i < NetworkTask.resp[0].length; i++) {
-                    remaining_messages_friends.add(censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
-                }
-                NetworkTask.resp = null;
-
                 // GET LOCAL MESSAGES
                 //if(!(ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
                     String[] params_local = {user_id, "local"};
@@ -392,11 +573,6 @@ public class MainActivity extends AppCompatActivity {
                     } catch (ExecutionException e) {
                         e.printStackTrace();
                     }
-
-                    for (int i = 0; i < NetworkTask.resp[0].length; i++) {
-                        remaining_messages_local.add(censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
-                    }
-                    NetworkTask.resp = null;
                 //}
 
                 // GET GLOBAL MESSAGES
@@ -410,11 +586,6 @@ public class MainActivity extends AppCompatActivity {
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 }
-
-                for(int i = 0; i < NetworkTask.resp[0].length; i++) {
-                    remaining_messages_global.add(censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
-                }
-                NetworkTask.resp = null;
             //}
         //}.start();
     }
@@ -536,9 +707,9 @@ public class MainActivity extends AppCompatActivity {
 
                 // toast
                 CharSequence text;
-                if(resp_status != null && resp_status[0] == "success" && NetworkTask.resp[0][0] == "true") text = "Message Sent";
+                if(msg_sent_resp) text = "Message Sent";
                 else text = "Network Error :(";
-                NetworkTask.resp = null;
+                msg_sent_resp = false;
                 editText.setText("", TextView.BufferType.EDITABLE);
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(finalv.getContext(), text, duration);
