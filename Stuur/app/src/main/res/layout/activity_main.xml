@@ -8,12 +8,11 @@
     android:fitsSystemWindows="true"
     tools:context="com.stuur.stuur.MainActivity">
 
+    <!-- android:src="@drawable/neuschwanstein" -->
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:src="@drawable/neuschwanstein"
         android:scaleType="centerCrop" />
 
     <com.stuur.stuur.CustomViewPager

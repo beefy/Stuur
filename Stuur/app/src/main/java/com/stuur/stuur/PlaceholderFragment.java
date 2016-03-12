@@ -4,14 +4,22 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -40,6 +48,7 @@ import org.w3c.dom.Text;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
@@ -87,9 +96,6 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
-        final View mainView = inflater.inflate(R.layout.activity_main, container, false);
-        ImageView imageView = (ImageView) mainView.findViewById(R.id.background_image);
-
 
         this.container = container;
         this.inflater = inflater;
@@ -109,20 +115,8 @@ public class PlaceholderFragment extends Fragment {
         final ListView type_list = (ListView) rootView.findViewById(R.id.censor_type_list);
         rootView.setTag("view" + section_num);
 
-        if(init) {
-            //String id = "com.stuur.stuur:drawable/" + MainActivity.background_images[background_image];
-            //int res = getResources().getIdentifier(id, null, null);
-            //imageView.setImageResource(res);
-            //imageView.refreshDrawableState();
-            //initial
-            //getActivity().runOnUiThread(new Runnable() {
-            //  public void run() {
-            //MainActivity.update_location(rootView.getContext());
-            //  }
-            //});// get location
-
-            init = false;
-        }
+        stuur_key_txt.setTextColor(MainActivity.title_colors[background_image]);
+        textView.setTextColor(MainActivity.title_colors[background_image]);
 
         if(section_num == 0) {
 

@@ -1,6 +1,7 @@
 package com.stuur.stuur;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,10 +9,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Point;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -20,6 +29,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,10 +44,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.apache.commons.lang3.mutable.Mutable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
     public static String[] friend_keys = {""};
     public static boolean msg_sent_resp = false;
     public static String friend_added = "0";
-    public static String[] background_images = {"aurora", "neuschwanstein", "street", "tulips", "waterway"};
+    public static int[] background_images = {R.drawable.aurora, R.drawable.neuschwanstein, R.drawable.street,R.drawable.hillside, R.drawable.autumn};
+    public static int[] title_colors = {Color.rgb(209,209,209),Color.rgb(99,99,99),Color.rgb(66,66,66), Color.rgb(99,99,99), Color.rgb(66,66,66)};
     public static int background_image = 0;
     public static boolean permissions_denied = false;
     public static Location location;
@@ -178,19 +192,59 @@ public class MainActivity extends AppCompatActivity {
             location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
 
-        // determine background image
+        // set background image
+        Display display= getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        final View mainView = getWindow().getDecorView();
         Random random = new Random();
-        background_image = random.nextInt(5);
+        background_image = random.nextInt(4);
+        //background_image = 4;
+        ImageView imageView = new ImageView(mainView.getContext());
+        imageView.setImageResource(MainActivity.background_images[background_image]);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        // set status/notification bar transparent
-        // only works for newer android versions
-        /*
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
-        */
+        Bitmap unscaled_bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        Bitmap scaled_bitmap = scaleCenterCrop(unscaled_bitmap,(int)(size.y*2.5),(int)(size.x*2.5));
+
+        BitmapDrawable bd = new BitmapDrawable(getResources(), scaled_bitmap);
+        mainView.setBackground(bd);
+
         MainActivity.loadType(mViewPager);
         MainActivity.loadWeight(mViewPager);
+    }
+
+    public Bitmap scaleCenterCrop(Bitmap source, int newHeight, int newWidth) {
+        int sourceWidth = source.getWidth();
+        int sourceHeight = source.getHeight();
+
+        // Compute the scaling factors to fit the new height and width, respectively.
+        // To cover the final image, the final scaling will be the bigger
+        // of these two.
+        float xScale = (float) newWidth / sourceWidth;
+        float yScale = (float) newHeight / sourceHeight;
+        float scale = Math.max(xScale, yScale);
+
+        // Now get the size of the source bitmap when scaled
+        float scaledWidth = scale * sourceWidth;
+        float scaledHeight = scale * sourceHeight;
+
+        // Let's find out the upper left coordinates if the scaled bitmap
+        // should be centered in the new size give by the parameters
+        float left = (newWidth - scaledWidth) / 2;
+        float top = (newHeight - scaledHeight) / 2;
+
+        // The target rectangle for the new, scaled version of the source bitmap will now
+        // be
+        RectF targetRect = new RectF(left, top, left + scaledWidth, top + scaledHeight);
+
+        // Finally, we create a new bitmap of the specified size and draw our new,
+        // scaled bitmap onto it.
+        Bitmap dest = Bitmap.createBitmap(newWidth, newHeight, source.getConfig());
+        Canvas canvas = new Canvas(dest);
+        canvas.drawBitmap(source, null, targetRect, null);
+
+        return dest;
     }
 
     public static void onChangeCheckbox(Bundle savedInstanceState, View v, CheckBox checkBox, String flag){
