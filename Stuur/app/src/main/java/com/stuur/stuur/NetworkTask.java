@@ -88,7 +88,7 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         String msg_text = in_msg_text;
         if (msg_text.contains("'")) msg_text = msg_text.replace("'", "''");
 
-        HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
+//        HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
 
         /*
         try {
@@ -322,18 +322,23 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 return success;
             case "receive_msg":
                 resp = receive_msg(parameters[0], parameters[1]);
-                for(int i = 0; i < NetworkTask.resp[0].length; i++) {
-                    if(parameters[1] == "friends") MainActivity.remaining_messages_friends.add(MainActivity.censor(resp[0][i], resp[1][i]));
-                    if(parameters[1] == "local") MainActivity.remaining_messages_local.add(MainActivity.censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
-                    if(parameters[1] == "global") MainActivity.remaining_messages_global.add(MainActivity.censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                if (resp != null && resp[0] != null) {
+                    for(int i = 0; i < NetworkTask.resp[0].length; i++) {
+                        if(parameters[1] == "friends") MainActivity.remaining_messages_friends.add(MainActivity.censor(resp[0][i], resp[1][i]));
+                        if(parameters[1] == "local") MainActivity.remaining_messages_local.add(MainActivity.censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                        if(parameters[1] == "global") MainActivity.remaining_messages_global.add(MainActivity.censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                    }
                 }
                 return success;
             case "create_user":
                 String[][] resp_temp_2 = {create_user(parameters[0])};
                 resp = resp_temp_2;
-                MainActivity.user_key = resp[0][0];
-                MainActivity.user_id = resp[0][1];
+                if(resp != null && resp[0] != null && resp[0][0] != null && resp[0][1] != null) {
+                    MainActivity.user_key = resp[0][0];
+                    MainActivity.user_id = resp[0][1];
+                }
                 resp = null;
+
                 return success;
             case "update_location":
                 String[][] resp_temp_3 = {update_location(parameters[0],parameters[1],parameters[2])};
@@ -345,9 +350,11 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 resp = resp_temp_4;
                 //filter out null values
                 List<String> temp = new ArrayList<String>();
-                for(String s : resp_temp_4[0]) {
-                    if(s != null) {
-                        temp.add(s);
+                if(resp_temp_4 != null && resp_temp_4[0] != null) {
+                    for (String s : resp_temp_4[0]) {
+                        if (s != null) {
+                            temp.add(s);
+                        }
                     }
                 }
                 MainActivity.friend_keys = temp.toArray(new String[temp.size()]);
@@ -364,7 +371,9 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
             case "add_friend":
                 String [][] resp_temp_5 = {add_friend(parameters[0], parameters[1])};
                 resp = resp_temp_5;
-                MainActivity.friend_added = resp_temp_5[0][0];
+                if(resp_temp_5 != null && resp_temp_5[0] != null && resp_temp_5[0][0] != null) {
+                    MainActivity.friend_added = resp_temp_5[0][0];
+                }
                 return success;
             case "delete_friend":
                 String [][] resp_temp_6 = {delete_friend(parameters[0], parameters[1])};
