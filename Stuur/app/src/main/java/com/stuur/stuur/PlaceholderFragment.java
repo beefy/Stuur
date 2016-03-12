@@ -1,10 +1,16 @@
 package com.stuur.stuur;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -21,6 +27,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -33,8 +40,11 @@ import org.w3c.dom.Text;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import static com.stuur.stuur.MainActivity.background_image;
 import static com.stuur.stuur.MainActivity.censor_type;
 import static com.stuur.stuur.MainActivity.censor_weight;
 import static com.stuur.stuur.MainActivity.check_new_messages;
@@ -48,10 +58,10 @@ import static com.stuur.stuur.MainActivity.receiveMsgAnimation;
  */
 public class PlaceholderFragment extends Fragment {
 
-    public static boolean init = true;
     public static LayoutInflater inflater;
     public static ViewGroup container;
     public static View view;
+    public static Boolean init = true;
 
     /**
      * The fragment argument representing the section number for this
@@ -77,17 +87,19 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
+        final View mainView = inflater.inflate(R.layout.activity_main, container, false);
+        ImageView imageView = (ImageView) mainView.findViewById(R.id.background_image);
+
 
         this.container = container;
         this.inflater = inflater;
         String[] page_title = {"Settings","Friend List","Friends","Local","Global"};
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         this.view = rootView;
+
         TextView textView = (TextView) rootView.findViewById(R.id.section_label);
         int section_num = getArguments().getInt(ARG_SECTION_NUMBER)-1;
         textView.setText(page_title[section_num]);
-
-        if(!MainActivity.init_checked_location) MainActivity.update_location(rootView.getContext());
 
         // hide/show contents for seperate pages
         final EditText msg_box = (EditText) rootView.findViewById(R.id.msg_box);
@@ -96,6 +108,21 @@ public class PlaceholderFragment extends Fragment {
         ListView weight_list = (ListView) rootView.findViewById(R.id.censor_weight_list);
         final ListView type_list = (ListView) rootView.findViewById(R.id.censor_type_list);
         rootView.setTag("view" + section_num);
+
+        if(init) {
+            //String id = "com.stuur.stuur:drawable/" + MainActivity.background_images[background_image];
+            //int res = getResources().getIdentifier(id, null, null);
+            //imageView.setImageResource(res);
+            //imageView.refreshDrawableState();
+            //initial
+            //getActivity().runOnUiThread(new Runnable() {
+            //  public void run() {
+            //MainActivity.update_location(rootView.getContext());
+            //  }
+            //});// get location
+
+            init = false;
+        }
 
         if(section_num == 0) {
 
@@ -280,5 +307,34 @@ public class PlaceholderFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState1) {
+        super.onActivityCreated(savedInstanceState1);
+        if(!MainActivity.init_checked_location) {
+            getLocation(getActivity());
+        }
+    }
+
+    public void getLocation(Activity activity) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},1);
+        } else {
+            double lng = MainActivity.location.getLongitude();
+            double lat = MainActivity.location.getLatitude();
+
+            String[] params_3 = {MainActivity.user_id, Double.toString(lat), Double.toString(lng)};
+            NetworkTask network_task_3 = new NetworkTask("update_location", params_3);
+            String[] resp_status_3 = new String[0];
+            try {
+                resp_status_3 = network_task_3.execute().get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            MainActivity.init_checked_location = true;
+        }
     }
 }

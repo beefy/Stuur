@@ -65,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
     public static String[] friend_keys = {""};
     public static boolean msg_sent_resp = false;
     public static String friend_added = "0";
+    public static String[] background_images = {"aurora", "neuschwanstein", "street", "tulips", "waterway"};
+    public static int background_image = 0;
+    public static boolean permissions_denied = false;
+    public static Location location;
 
     public static String[] emoji_basic = {
             "\uDE00", "\uDE01", "\uDE02", "\uDE03", "\uDE04", "\uDE05", "\uDE06", "\uDE07", "\uDE08", "\uDE09", "\uDE0A", "\uDE0B", "\uDE0C", "\uDE0D", "\uDE0D", "\uDE0E", "\uDE0F",
@@ -75,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
     //local Database setting info
     public static final String DEFAULT = "N/A";
-    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String MyPREFERENCES = "MyPrefs";
     public static final String SETTING_WEIGHT = "censorWeight";
     public static final String SETTING_TYPE = "censorType";
 
@@ -159,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // get messages
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -167,13 +172,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 0, 5000);
 
+        //get location
         locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                update_location(getApplicationContext());
-            }
-        }, 0, 30 * 60 * 1000);
+        if (!(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
+
+        // determine background image
+        Random random = new Random();
+        background_image = random.nextInt(5);
 
         // set status/notification bar transparent
         // only works for newer android versions
@@ -185,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.loadType(mViewPager);
         MainActivity.loadWeight(mViewPager);
     }
-
 
     public static void onChangeCheckbox(Bundle savedInstanceState, View v, CheckBox checkBox, String flag){
 
@@ -270,12 +276,12 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    if(friend_added.equals("1")) {
+                    if (friend_added.equals("1")) {
                         // add nick to stored preferences....
                         //
                         //
 
-                        if(!selected_key.equals(keyText.getText().toString())) {
+                        if (!selected_key.equals(keyText.getText().toString())) {
                             // delete old friend
                             String[] params_3 = {MainActivity.user_id, selected_key};
                             NetworkTask network_task_3 = new NetworkTask("delete_friend", params_3);
@@ -508,32 +514,38 @@ public class MainActivity extends AppCompatActivity {
         v.findViewById(R.id.add_friend_dialog).startAnimation(shake);
     }
 
-    public static void update_location(Context context) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        double lng = location.getLongitude();
-        double lat = location.getLatitude();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permission[], int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    try {
+                        locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        double lng = location.getLongitude();
+                        double lat = location.getLatitude();
 
-        String[] params = {user_id, Double.toString(lat), Double.toString(lng)};
-        NetworkTask network_task = new NetworkTask("update_location", params);
-        String[] resp_status = new String[0];
-        try {
-            resp_status = network_task.execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+                        String[] params_3 = {user_id, Double.toString(lat), Double.toString(lng)};
+                        NetworkTask network_task_3 = new NetworkTask("update_location", params_3);
+                        String[] resp_status_3 = new String[0];
+                        try {
+                            resp_status_3 = network_task_3.execute().get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        init_checked_location = true;
+                    } catch(SecurityException e) {
+                        if(PlaceholderFragment.init) {
+                            final Toast toast = Toast.makeText(getApplicationContext(), "Turn location on to send Local Messages!", Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    }
+                } else {
+                    permissions_denied = true;
+                }
         }
-        init_checked_location = true;
     }
 
     public static void check_new_messages(View v) {

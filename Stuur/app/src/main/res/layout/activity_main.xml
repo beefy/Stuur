@@ -9,10 +9,11 @@
     tools:context="com.stuur.stuur.MainActivity">
 
     <ImageView
+        android:id="@+id/background_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:src="@drawable/background"
+        android:src="@drawable/neuschwanstein"
         android:scaleType="centerCrop" />
 
     <com.stuur.stuur.CustomViewPager
