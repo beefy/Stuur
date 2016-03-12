@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -52,6 +53,9 @@ import android.widget.Toast;
 
 import org.apache.commons.lang3.mutable.Mutable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -209,7 +213,10 @@ public class MainActivity extends AppCompatActivity {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         Bitmap unscaled_bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        Bitmap scaled_bitmap = scaleCenterCrop(unscaled_bitmap,(int)(size.y*2.5),(int)(size.x*2.5));
+        Bitmap scaled_bitmap = scaleCenterCrop(unscaled_bitmap,(int)(size.y),(int)(size.x));
+        //ByteArrayOutputStream out = new ByteArrayOutputStream();
+        //scaled_bitmap.compress(Bitmap.CompressFormat.JPEG,100, out);
+        //Bitmap compressed_bitmap = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
 
         BitmapDrawable bd = new BitmapDrawable(getResources(), scaled_bitmap);
         mainView.setBackground(bd);
@@ -694,10 +701,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                         init_checked_location = true;
                     } catch(SecurityException e) {
-                        if(PlaceholderFragment.init) {
+                        //if(PlaceholderFragment.init) {
                             final Toast toast = Toast.makeText(getApplicationContext(), "Turn location on to send Local Messages!", Toast.LENGTH_LONG);
                             toast.show();
-                        }
+                        //}
                     }
                 } else {
                     permissions_denied = true;

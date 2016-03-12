@@ -117,18 +117,23 @@ public class PlaceholderFragment extends Fragment {
 
         stuur_key_txt.setTextColor(MainActivity.title_colors[background_image]);
         textView.setTextColor(MainActivity.title_colors[background_image]);
+        init = false;
 
         if(section_num == 0) {
 
-            // settings page
+            if (censor_weight.equals("none"))
+                type_list.setVisibility(rootView.GONE);
+            else
+                type_list.setVisibility(rootView.VISIBLE);
 
             //set visibilities and hide keyboard
             msg_box.setVisibility(rootView.GONE);
             add_friend_btn.setVisibility(rootView.GONE);
             stuur_key_txt.setVisibility(rootView.VISIBLE);
             weight_list.setVisibility(rootView.VISIBLE);
-            type_list.setVisibility(rootView.VISIBLE);
             MainActivity.hideKeyboard(getActivity());
+
+
 
             stuur_key_txt.setText("Your stuur key: " + MainActivity.user_key);
 
