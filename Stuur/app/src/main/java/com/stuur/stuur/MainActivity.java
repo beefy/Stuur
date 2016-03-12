@@ -97,6 +97,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String SETTING_WEIGHT = "censorWeight";
     public static final String SETTING_TYPE = "censorType";
 
+    public static final String MyFRIENDS = "MyFriends";
+    public static final String FRIENDS = "local_friends";
+    public static final String IDS = "local_ids";
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -318,36 +322,82 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    // add friend
-                    String[] params = {MainActivity.user_id, keyText.getText().toString()};
-                    NetworkTask network_task = new NetworkTask("add_friend", params);
-                    String[] resp_status = new String[0];
-                    try {
-                        resp_status = network_task.execute().get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
+                    if(nickText.getText().toString() == null || nickText.getText().toString().length() == 0) {
+                        nickText.setText("Stuur buddy");
                     }
 
-                    if (friend_added.equals("1")) {
-                        // add nick to stored preferences....
-                        //
-                        //
+                    if(!keyText.getText().toString().equals(selected_key)) {
+                        // add friend
+                        String[] params = {MainActivity.user_id, keyText.getText().toString()};
+                        NetworkTask network_task = new NetworkTask("add_friend", params);
+                        String[] resp_status = new String[0];
+                        try {
+                            resp_status = network_task.execute().get();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
 
-                        if (!selected_key.equals(keyText.getText().toString())) {
-                            // delete old friend
-                            String[] params_3 = {MainActivity.user_id, selected_key};
-                            NetworkTask network_task_3 = new NetworkTask("delete_friend", params_3);
-                            String[] resp_status_3 = new String[0];
+                        if (friend_added.equals("1")) {
+                            deleteFriendLocally(v, final_position);
+                            addFriendLocally(v, nickText.getText().toString(), final_position);
+                            setFriendsLocally(v);
+
+                            if (!selected_key.equals(keyText.getText().toString())) {
+                                // delete old friend
+                                String[] params_3 = {MainActivity.user_id, selected_key};
+                                NetworkTask network_task_3 = new NetworkTask("delete_friend", params_3);
+                                String[] resp_status_3 = new String[0];
+                                try {
+                                    resp_status_3 = network_task_3.execute().get();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (ExecutionException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            // refresh friends list
+                            String[] params_2 = {MainActivity.user_id};
+                            NetworkTask network_task_2 = new NetworkTask("get_friends", params_2);
+                            String[] resp_status_2 = new String[0];
                             try {
-                                resp_status_3 = network_task_3.execute().get();
+                                resp_status_2 = network_task_2.execute().get();
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             } catch (ExecutionException e) {
                                 e.printStackTrace();
                             }
+                            View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                            Activity host = (Activity) activeView.getContext();
+                            refreshFriendsList(activeView, host);
+
+                            // display toast
+                            Toast toast = Toast.makeText(v.getContext(), "Congrats! " + nickText.getText().toString() + " will make a great friend.", Toast.LENGTH_SHORT);
+                            toast.show();
+
+                            dialog.dismiss();
+                        } else {
+                            // shake key
+                            Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
+                            keyText.startAnimation(shake);
+
+                            // empty key
+                            keyText.setText("");
+
+                            // display toast
+                            Toast toast = Toast.makeText(v.getContext(), "Friend not found :/", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
+                        friend_added = "0";
+                    } else {
+                        deleteFriendLocally(v, final_position);
+                        addFriendLocally(v, nickText.getText().toString(), final_position);
+                        setFriendsLocally(v);
+                        // display toast
+                        Toast toast = Toast.makeText(v.getContext(), "Congrats! " + nickText.getText().toString() + " will make a great friend.", Toast.LENGTH_SHORT);
+                        toast.show();
 
                         // refresh friends list
                         String[] params_2 = {MainActivity.user_id};
@@ -364,30 +414,16 @@ public class MainActivity extends AppCompatActivity {
                         Activity host = (Activity) activeView.getContext();
                         refreshFriendsList(activeView, host);
 
-                        // display toast
-                        Toast toast = Toast.makeText(v.getContext(), "Congrats! " + nickText.getText().toString() + " will make a great friend.", Toast.LENGTH_SHORT);
-                        toast.show();
-
                         dialog.dismiss();
-                    } else {
-                        // shake key
-                        Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
-                        keyText.startAnimation(shake);
-
-                        // empty key
-                        keyText.setText("");
-
-                        // display toast
-                        Toast toast = Toast.makeText(v.getContext(), "Friend not found :/", Toast.LENGTH_SHORT);
-                        toast.show();
                     }
-                    friend_added = "0";
                 }
             }
         });
 
         delete.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
+
+                deleteFriendLocally(v,final_position);
 
                 // delete friend
                 String[] params = {MainActivity.user_id, selected_key};
@@ -460,6 +496,10 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
                 } else {
 
+                    if(nickText.getText().toString() == null || nickText.getText().toString().length() == 0) {
+                        nickText.setText("Stuur buddy");
+                    }
+
                     // add friend
                     String[] params = {MainActivity.user_id, keyText.getText().toString()};
                     NetworkTask network_task = new NetworkTask("add_friend", params);
@@ -472,10 +512,9 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    if(friend_added.equals("1")) {
-                        // add nick to stored preferences....
-                        //
-                        //
+                    if (friend_added.equals("1")) {
+                        addFriendLocally(v, nickText.getText().toString(),friend_nicks.length);
+                        setFriendsLocally(v);
 
                         // refresh friends list
                         String[] params_2 = {MainActivity.user_id};
@@ -521,19 +560,83 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void refreshFriendsList(View v, Activity a) {
+    public static void addFriendLocally(View view, String name, int position){
+        SharedPreferences sharedpreferences;
+        sharedpreferences = view.getContext().getSharedPreferences(MyFRIENDS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        String added = "";
+        for(int i = 0; i < friend_nicks.length+1; i++) {
+            if(i == position) added += name + ",";
+            if(i < friend_nicks.length) added += friend_nicks[i] + ",";
+        }
+        editor.putString(FRIENDS, added);
+        editor.apply();
+        //Toast.makeText(view.getContext(), "adding " + name + " locally", Toast.LENGTH_SHORT).show();
+    }
 
-        final ListView friends_listView = (ListView) v.findViewById(R.id.friend_list);
-        CustomList adapter = new CustomList(a, MainActivity.friend_nicks, MainActivity.friend_keys);
-        friends_listView.setAdapter(adapter);
-        friends_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selected_nick = MainActivity.friend_nicks[position];
-                String selected_key = MainActivity.friend_keys[position];
-                MainActivity.onCreateDialog(view, selected_nick, selected_key, position);
+    public static void deleteFriendLocally(View view, int position) {
+        SharedPreferences sharedpreferences;
+        sharedpreferences = view.getContext().getSharedPreferences(MyFRIENDS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        String[] cur_friends = getFriendsLocally(view).split(",");
+        ArrayList<String> temp = new ArrayList<String>();
+        for(int i = 0; i < cur_friends.length; i++) {
+            if(i != position) {
+                temp.add(cur_friends[i]);
             }
-        });
+        }
+        cur_friends = temp.toArray(new String[temp.size()]);
+        friend_nicks = cur_friends;
+        String added = "";
+        for(int i = 0; i < cur_friends.length; i++) {
+            added += cur_friends[i] + ",";
+        }
+        editor.putString(FRIENDS, added + ",");
+        editor.apply();
+
+    }
+
+    public static String getFriendsLocally(View view){
+
+        SharedPreferences sharedpreferences;
+        sharedpreferences = view.getContext().getSharedPreferences(MyFRIENDS, Context.MODE_PRIVATE);
+        String friends = sharedpreferences.getString(FRIENDS, DEFAULT);
+
+        if (friends.equals(DEFAULT)) {
+            //Toast.makeText(view.getContext(), "No friends currently", Toast.LENGTH_SHORT).show();
+            return "";
+        } else {
+            //Toast.makeText(view.getContext(), friends, Toast.LENGTH_SHORT).show();
+            return friends;
+        }
+
+    }
+
+    public static void setFriendsLocally(View v) {
+        String cur_friends = getFriendsLocally(v);
+        String[] cur_friends_arr = cur_friends.split(",");
+        friend_nicks = cur_friends_arr;
+    }
+
+    public static void refreshFriendsList(View v, Activity a) {
+        if (friend_keys.length > 0) {
+            final ListView friends_listView = (ListView) v.findViewById(R.id.friend_list);
+            friends_listView.setVisibility(View.VISIBLE);
+            friend_nicks = getFriendsLocally(v).split(",");
+            CustomList adapter = new CustomList(a, friend_nicks, friend_keys);
+            friends_listView.setAdapter(adapter);
+            friends_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String selected_nick = friend_nicks[position];
+                    String selected_key = friend_keys[position];
+                    MainActivity.onCreateDialog(view, selected_nick, selected_key, position);
+                }
+            });
+        } else {
+            final ListView friends_listView = (ListView) v.findViewById(R.id.friend_list);
+            friends_listView.setVisibility(View.GONE);
+        }
     }
 
     public static void shakeMsgBox(View v) {

@@ -5,6 +5,9 @@ import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +87,26 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         String encoded_msg = "";
         String msg_text = in_msg_text;
         if (msg_text.contains("'")) msg_text = msg_text.replace("'", "''");
-        if (msg_text.contains("\\")) msg_text = msg_text.replace("\\", "\\\\");
+
+        HttpClient httpClient = HttpClientBuilder.create().build(); //Use this instead
+
+        /*
+        try {
+            HttpPost request = new HttpPost("http://yoururl");
+            HttpEntity params =new StringEntity("details={\"name\":\"myname\",\"age\":\"20\"} ");
+            request.addHeader("content-type", "application/x-www-form-urlencoded");
+            request.setEntity(params);
+           //HttpResponse response = httpClient.execute(request);
+            httpClient.execute(request);
+
+            // handle response here...
+        }catch (Exception ex) {
+            // handle exception here
+        } finally {
+            httpClient.getConnectionManager().shutdown(); //Deprecated
+        }
+        */
+
         try {
             encoded_msg = URLEncoder.encode(msg_text, "UTF-8");
         } catch (UnsupportedEncodingException e) {
