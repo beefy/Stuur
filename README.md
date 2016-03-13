@@ -12,5 +12,5 @@ There are three messaging pools: Friends, Local, and Global. In each group, you 
 
 We do not control or monitor what users say, but Stuur detects profanity from your received messages. You can change your censor options in the settings screen.
 
-All of our background art is licensed CC0 Public Domain.
+All of our background art is licensed CC0 Public Domain.  
 This project was developed at Drexel University.
