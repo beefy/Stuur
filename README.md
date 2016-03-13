@@ -1,5 +1,5 @@
 # Stuur
-One-way anonymous messaging.
+One-way anonymous messaging.  
 Available for download here: https://play.google.com/store/apps/details?id=com.stuur.stuur&hl=en
 
 With Stuur, you can send send messages to random people and receive messages from random people. Each message you send will go to a different random person, and each message you receive was sent from a different random person.
