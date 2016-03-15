@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // update friend dialog
-    public static void onCreateDialog(View v, String nick, String key, int position) {
+    public static void onCreateDialog(View v, final String nick, String key, int position) {
 
         final String selected_key = key;
         final String selected_nick = nick;
@@ -327,6 +327,10 @@ public class MainActivity extends AppCompatActivity {
                     Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
                     keyText.startAnimation(shake);
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
+                } else if(nickText.getText().toString().contains(",")) {
+                    Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
+                    nickText.startAnimation(shake);
+                    Toast.makeText(v.getContext(), "Nickname cannot contain \",\"", Toast.LENGTH_SHORT).show();
                 } else {
 
                     if (nickText.getText().toString() == null || nickText.getText().toString().length() == 0) {
@@ -430,7 +434,7 @@ public class MainActivity extends AppCompatActivity {
         delete.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
 
-                deleteFriendLocally(v,final_position);
+                deleteFriendLocally(v, final_position);
 
                 // delete friend
                 String[] params = {MainActivity.user_id, selected_key};
@@ -501,6 +505,10 @@ public class MainActivity extends AppCompatActivity {
                     Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
                     keyText.startAnimation(shake);
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
+                } else if(nickText.getText().toString().contains(",")) {
+                    Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
+                    nickText.startAnimation(shake);
+                    Toast.makeText(v.getContext(), "Nickname cannot contain \",\"", Toast.LENGTH_SHORT).show();
                 } else {
 
                     if (nickText.getText().toString() == null || nickText.getText().toString().length() == 0) {
