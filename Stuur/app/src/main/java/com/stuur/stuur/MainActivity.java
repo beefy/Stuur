@@ -329,11 +329,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    if(nickText.getText().toString() == null || nickText.getText().toString().length() == 0) {
+                    if (nickText.getText().toString() == null || nickText.getText().toString().length() == 0) {
                         nickText.setText("Stuur buddy");
                     }
 
-                    if(!keyText.getText().toString().equals(selected_key)) {
+                    if (!keyText.getText().toString().equals(selected_key)) {
                         // add friend
                         String[] params = {MainActivity.user_id, keyText.getText().toString()};
                         NetworkTask network_task = new NetworkTask("add_friend", params);
@@ -503,7 +503,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    if(nickText.getText().toString() == null || nickText.getText().toString().length() == 0) {
+                    if (nickText.getText().toString() == null || nickText.getText().toString().length() == 0) {
                         nickText.setText("Stuur buddy");
                     }
 
@@ -520,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     if (friend_added.equals("1")) {
-                        addFriendLocally(v, nickText.getText().toString(),friend_nicks.length);
+                        addFriendLocally(v, nickText.getText().toString(), friend_nicks.length);
                         setFriendsLocally(v);
 
                         // refresh friends list
@@ -686,20 +686,22 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
                         Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        double lng = location.getLongitude();
-                        double lat = location.getLatitude();
+                        if(location != null) {
+                            double lng = location.getLongitude();
+                            double lat = location.getLatitude();
 
-                        String[] params_3 = {user_id, Double.toString(lat), Double.toString(lng)};
-                        NetworkTask network_task_3 = new NetworkTask("update_location", params_3);
-                        String[] resp_status_3 = new String[0];
-                        try {
-                            resp_status_3 = network_task_3.execute().get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
+                            String[] params_3 = {user_id, Double.toString(lat), Double.toString(lng)};
+                            NetworkTask network_task_3 = new NetworkTask("update_location", params_3);
+                            String[] resp_status_3 = new String[0];
+                            try {
+                                resp_status_3 = network_task_3.execute().get();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            }
+                            init_checked_location = true;
                         }
-                        init_checked_location = true;
                     } catch(SecurityException e) {
                         //if(PlaceholderFragment.init) {
                             final Toast toast = Toast.makeText(getApplicationContext(), "Turn location on to send Local Messages!", Toast.LENGTH_LONG);
@@ -708,7 +710,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else {
                     permissions_denied = true;
+                    init_checked_location = true;
                 }
+                break;
+            default:
+                permissions_denied = true;
+                init_checked_location = true;
+                break;
+
         }
     }
 
