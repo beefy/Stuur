@@ -238,12 +238,13 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         String parameters = "user_id=" + user_id;
         String network_call = base_url+port_num+get_friends_endpoint+parameters;
         String resp = "";
-        String[] out = new String[2];
+        String[] out;
         try {
             resp = get_website_src(network_call);
 
             // read response
             JSONArray obj = (JSONArray) new JSONObject(resp).get("content");
+            out = new String[obj.length()];
             for(int i = 0; i < obj.length(); i++) {
                 out[i] = obj.get(i).toString();
             }
