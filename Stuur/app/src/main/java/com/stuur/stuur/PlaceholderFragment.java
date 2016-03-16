@@ -113,6 +113,7 @@ public class PlaceholderFragment extends Fragment {
         TextView stuur_key_txt = (TextView) rootView.findViewById(R.id.stuur_key_txt);
         ListView weight_list = (ListView) rootView.findViewById(R.id.censor_weight_list);
         final ListView type_list = (ListView) rootView.findViewById(R.id.censor_type_list);
+        final ListView user_listView = (ListView) rootView.findViewById(R.id.user_info_list);
         rootView.setTag("view" + section_num);
 
         stuur_key_txt.setTextColor(MainActivity.title_colors[background_image]);
@@ -131,6 +132,7 @@ public class PlaceholderFragment extends Fragment {
             add_friend_btn.setVisibility(rootView.GONE);
             stuur_key_txt.setVisibility(rootView.VISIBLE);
             weight_list.setVisibility(rootView.VISIBLE);
+            user_listView.setVisibility(rootView.VISIBLE);
             MainActivity.hideKeyboard(getActivity());
 
 
@@ -237,6 +239,12 @@ public class PlaceholderFragment extends Fragment {
                 }
             });
 
+            // user info lists
+            String[] user_info_desc = {"Impacts Sent: ", "Impacts Received: ", "Profanity Sent: ", "Profanity Received: "};
+            String[] user_info = {MainActivity.num_msgs_sent, MainActivity.num_profanity_received, MainActivity.num_profanity_sent, MainActivity.num_profanity_received};
+            CustomList adapter = new CustomList(getActivity(), user_info_desc, user_info);
+            user_listView.setAdapter(adapter);
+
         } else if(section_num == 1) {
             // friend list page
             msg_box.setVisibility(rootView.GONE);
@@ -244,6 +252,7 @@ public class PlaceholderFragment extends Fragment {
             stuur_key_txt.setVisibility(rootView.GONE);
             weight_list.setVisibility(rootView.GONE);
             type_list.setVisibility(rootView.GONE);
+            user_listView.setVisibility(rootView.GONE);
             MainActivity.hideKeyboard(getActivity());
 
             // friends list
@@ -263,6 +272,7 @@ public class PlaceholderFragment extends Fragment {
             stuur_key_txt.setVisibility(rootView.GONE);
             weight_list.setVisibility(rootView.GONE);
             type_list.setVisibility(rootView.GONE);
+            user_listView.setVisibility(rootView.GONE);
 
             msg_box.setOnKeyListener(new View.OnKeyListener() {
                 @Override
