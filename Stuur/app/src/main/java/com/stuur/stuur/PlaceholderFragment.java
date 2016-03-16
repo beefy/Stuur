@@ -39,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -114,6 +115,8 @@ public class PlaceholderFragment extends Fragment {
         ListView weight_list = (ListView) rootView.findViewById(R.id.censor_weight_list);
         final ListView type_list = (ListView) rootView.findViewById(R.id.censor_type_list);
         final ListView user_listView = (ListView) rootView.findViewById(R.id.user_info_list);
+        RelativeLayout settings_layout = (RelativeLayout) rootView.findViewById(R.id.settings_layout);
+        ScrollView settings_scroll = (ScrollView) rootView.findViewById(R.id.settings_scroll);
         rootView.setTag("view" + section_num);
 
         stuur_key_txt.setTextColor(MainActivity.title_colors[background_image]);
@@ -133,6 +136,8 @@ public class PlaceholderFragment extends Fragment {
             stuur_key_txt.setVisibility(rootView.VISIBLE);
             weight_list.setVisibility(rootView.VISIBLE);
             user_listView.setVisibility(rootView.VISIBLE);
+            settings_layout.setVisibility(rootView.VISIBLE);
+            settings_scroll.setVisibility(rootView.VISIBLE);
             MainActivity.hideKeyboard(getActivity());
 
 
@@ -253,6 +258,8 @@ public class PlaceholderFragment extends Fragment {
             weight_list.setVisibility(rootView.GONE);
             type_list.setVisibility(rootView.GONE);
             user_listView.setVisibility(rootView.GONE);
+            settings_layout.setVisibility(rootView.GONE);
+            settings_scroll.setVisibility(rootView.GONE);
             MainActivity.hideKeyboard(getActivity());
 
             // friends list
@@ -273,6 +280,8 @@ public class PlaceholderFragment extends Fragment {
             weight_list.setVisibility(rootView.GONE);
             type_list.setVisibility(rootView.GONE);
             user_listView.setVisibility(rootView.GONE);
+            settings_layout.setVisibility(rootView.GONE);
+            settings_scroll.setVisibility(rootView.GONE);
 
             msg_box.setOnKeyListener(new View.OnKeyListener() {
                 @Override
