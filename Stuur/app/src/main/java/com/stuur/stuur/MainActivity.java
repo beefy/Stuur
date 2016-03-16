@@ -76,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
     public static String android_id;
     public static String user_key;
     public static String user_id;
+    public static String num_profanity_sent;
+    public static String num_profanity_received;
+    public static String num_msgs_sent;
+    public static String num_msgs_received;
     public static LocationManager locationManager;
     public static boolean init_checked_location = false;
     public static String[] friend_nicks = {"You need some friends, loser"};

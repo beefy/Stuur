@@ -186,12 +186,13 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         String parameters = "device_id=" + device_id;
         String network_call = base_url+port_num+create_user_endpoint+parameters;
         String resp = "";
-        String[] out = new String[2];
+        String[] out;
         try {
             resp = get_website_src(network_call);
 
             // read response
             JSONArray obj = (JSONArray) new JSONObject(resp).get("content");
+            out = new String[obj.length()];
             for(int i = 0; i < obj.length(); i++) {
                 out[i] = obj.get(i).toString();
             }
@@ -337,6 +338,10 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 if(resp != null && resp[0] != null && resp[0][0] != null && resp[0][1] != null) {
                     MainActivity.user_key = resp[0][0];
                     MainActivity.user_id = resp[0][1];
+                    MainActivity.num_profanity_sent = resp[0][2];
+                    MainActivity.num_profanity_received = resp[0][3];
+                    MainActivity.num_msgs_sent = resp[0][4];
+                    MainActivity.num_msgs_received = resp[0][5];
                 }
                 resp = null;
 

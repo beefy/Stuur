@@ -18,6 +18,7 @@
             android:id="@id/checkbox"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="50dp"
             android:focusable="false"
             android:layout_gravity="center_vertical"
             android:clickable="false"
