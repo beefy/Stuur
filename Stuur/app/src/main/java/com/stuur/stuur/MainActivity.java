@@ -82,8 +82,8 @@ public class MainActivity extends AppCompatActivity {
     public static String[] friend_keys = {""};
     public static boolean msg_sent_resp = false;
     public static String friend_added = "0";
-    public static int[] background_images = {R.drawable.aurora, R.drawable.neuschwanstein, R.drawable.street,R.drawable.hillside, R.drawable.autumn};
-    public static int[] title_colors = {Color.rgb(209,209,209),Color.rgb(99,99,99),Color.rgb(66,66,66), Color.rgb(99,99,99), Color.rgb(66,66,66)};
+    public static int[] background_images = {R.drawable.aurora, R.drawable.neuschwanstein, R.drawable.street,R.drawable.hillside, R.drawable.autumn, R.drawable.fence, R.drawable.fog, R.drawable.ocean, R.drawable.toast };
+    public static int[] title_colors = {Color.rgb(209,209,209),Color.rgb(99,99,99),Color.rgb(66,66,66), Color.rgb(99,99,99), Color.rgb(66,66,66),Color.rgb(229,229,229),Color.rgb(99,99,99),Color.rgb(209,209,209),Color.rgb(66,66,66)};
     public static int background_image = 0;
     public static boolean permissions_denied = false;
     public static Location location;
@@ -206,8 +206,8 @@ public class MainActivity extends AppCompatActivity {
         display.getSize(size);
         final View mainView = getWindow().getDecorView();
         Random random = new Random();
-        background_image = random.nextInt(4);
-        //background_image = 4;
+        background_image = random.nextInt(background_images.length-1);
+        //background_image = 8;
         ImageView imageView = new ImageView(mainView.getContext());
         imageView.setImageResource(MainActivity.background_images[background_image]);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
