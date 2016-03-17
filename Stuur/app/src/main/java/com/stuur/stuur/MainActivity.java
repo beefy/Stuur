@@ -831,6 +831,18 @@ public class MainActivity extends AppCompatActivity {
                     EditText reg_editText = (EditText) finalv.findViewById(R.id.msg_box);
                     reg_editText.setText(anim_editText.getText());
                     ongoing_animation = false;
+
+                    // update user stats
+                    String[] params_2 = {MainActivity.android_id};
+                    NetworkTask network_task_2 = new NetworkTask("create_user", params_2);
+                    String[] resp_status_2 = new String[0];
+                    try {
+                        resp_status_2 = network_task_2.execute().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             v.findViewById(R.id.anim_msg_box).setVisibility(View.VISIBLE);
@@ -857,6 +869,19 @@ public class MainActivity extends AppCompatActivity {
                     reg_editText.setFocusableInTouchMode(true);
                     mViewPager.setPagingEnabled(true);
                     ongoing_animation = false;
+
+
+                    // update user stats
+                    String[] params_2 = {MainActivity.android_id};
+                    NetworkTask network_task_2 = new NetworkTask("create_user", params_2);
+                    String[] resp_status_2 = new String[0];
+                    try {
+                        resp_status_2 = network_task_2.execute().get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
@@ -916,6 +941,20 @@ public class MainActivity extends AppCompatActivity {
                 toast.show();
 
                 ongoing_animation = false;
+
+
+                // update user stats
+                String[] params_2 = {MainActivity.android_id};
+                NetworkTask network_task_2 = new NetworkTask("create_user", params_2);
+                String[] resp_status_2 = new String[0];
+                try {
+                    resp_status_2 = network_task_2.execute().get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 

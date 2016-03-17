@@ -1,6 +1,7 @@
 package com.stuur.stuur;
 
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 
@@ -334,16 +336,14 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 return success;
             case "create_user":
                 String[][] resp_temp_2 = {create_user(parameters[0])};
-                resp = resp_temp_2;
-                if(resp != null && resp[0] != null && resp[0][0] != null && resp[0][1] != null) {
-                    MainActivity.user_key = resp[0][0];
-                    MainActivity.user_id = resp[0][1];
-                    MainActivity.num_profanity_sent = resp[0][2];
-                    MainActivity.num_profanity_received = resp[0][3];
-                    MainActivity.num_msgs_sent = resp[0][4];
-                    MainActivity.num_msgs_received = resp[0][5];
+                if(resp_temp_2 != null) {
+                    MainActivity.user_key = resp_temp_2[0][0];
+                    MainActivity.user_id = resp_temp_2[0][1];
+                    MainActivity.num_profanity_sent = resp_temp_2[0][2];
+                    MainActivity.num_profanity_received = resp_temp_2[0][3];
+                    MainActivity.num_msgs_sent = resp_temp_2[0][4];
+                    MainActivity.num_msgs_received = resp_temp_2[0][5];
                 }
-                resp = null;
 
                 return success;
             case "update_location":

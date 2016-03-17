@@ -246,7 +246,7 @@ public class PlaceholderFragment extends Fragment {
 
             // user info lists
             String[] user_info_desc = {"Impacts Sent: ", "Impacts Received: ", "Profanity Sent: ", "Profanity Received: "};
-            String[] user_info = {MainActivity.num_msgs_sent, MainActivity.num_profanity_received, MainActivity.num_profanity_sent, MainActivity.num_profanity_received};
+            String[] user_info = {MainActivity.num_msgs_sent, MainActivity.num_msgs_received, MainActivity.num_profanity_sent, MainActivity.num_profanity_received};
             CustomList adapter = new CustomList(getActivity(), user_info_desc, user_info);
             user_listView.setAdapter(adapter);
 
