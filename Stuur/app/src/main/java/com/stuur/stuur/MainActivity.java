@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
         display.getSize(size);
         final View mainView = getWindow().getDecorView();
         Random random = new Random();
-        background_image = random.nextInt(background_images.length-1);
+        background_image = random.nextInt(background_images.length);
         //background_image = 8;
         ImageView imageView = new ImageView(mainView.getContext());
         imageView.setImageResource(MainActivity.background_images[background_image]);
