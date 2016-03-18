@@ -58,6 +58,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 mViewPager.postOnAnimationDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                        View activeView = mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
                         receiveMsgAnimation(activeView);
                     }
                 }, 100);
@@ -171,9 +172,7 @@ public class MainActivity extends AppCompatActivity {
         String[] resp_status = new String[0];
         try {
             resp_status = network_task.execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
@@ -183,9 +182,7 @@ public class MainActivity extends AppCompatActivity {
         String[] resp_status_2 = new String[0];
         try {
             resp_status_2 = network_task_2.execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
@@ -193,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                View activeView = mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
                 check_new_messages(activeView);
             }
         }, 0, 5000);
@@ -217,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         Bitmap unscaled_bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        Bitmap scaled_bitmap = scaleCenterCrop(unscaled_bitmap,(int)(size.y),(int)(size.x));
+        Bitmap scaled_bitmap = scaleCenterCrop(unscaled_bitmap, size.y, size.x);
         //ByteArrayOutputStream out = new ByteArrayOutputStream();
         //scaled_bitmap.compress(Bitmap.CompressFormat.JPEG,100, out);
         //Bitmap compressed_bitmap = BitmapFactory.decodeStream(new ByteArrayInputStream(out.toByteArray()));
@@ -348,9 +345,7 @@ public class MainActivity extends AppCompatActivity {
                         String[] resp_status = new String[0];
                         try {
                             resp_status = network_task.execute().get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
+                        } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();
                         }
 
@@ -366,9 +361,7 @@ public class MainActivity extends AppCompatActivity {
                                 String[] resp_status_3 = new String[0];
                                 try {
                                     resp_status_3 = network_task_3.execute().get();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                } catch (ExecutionException e) {
+                                } catch (InterruptedException | ExecutionException e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -379,12 +372,10 @@ public class MainActivity extends AppCompatActivity {
                             String[] resp_status_2 = new String[0];
                             try {
                                 resp_status_2 = network_task_2.execute().get();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (ExecutionException e) {
+                            } catch (InterruptedException | ExecutionException e) {
                                 e.printStackTrace();
                             }
-                            View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                            View activeView = mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
                             Activity host = (Activity) activeView.getContext();
                             refreshFriendsList(activeView, host);
 
@@ -420,12 +411,10 @@ public class MainActivity extends AppCompatActivity {
                         String[] resp_status_2 = new String[0];
                         try {
                             resp_status_2 = network_task_2.execute().get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
+                        } catch (InterruptedException | ExecutionException e) {
                             e.printStackTrace();
                         }
-                        View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                        View activeView = mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
                         Activity host = (Activity) activeView.getContext();
                         refreshFriendsList(activeView, host);
 
@@ -446,9 +435,7 @@ public class MainActivity extends AppCompatActivity {
                 String[] resp_status = new String[0];
                 try {
                     resp_status = network_task.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
@@ -458,12 +445,10 @@ public class MainActivity extends AppCompatActivity {
                 String[] resp_status_2 = new String[0];
                 try {
                     resp_status_2 = network_task_2.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
-                View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                View activeView = mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
                 Activity host = (Activity) activeView.getContext();
                 refreshFriendsList(activeView, host);
 
@@ -525,9 +510,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] resp_status = new String[0];
                     try {
                         resp_status = network_task.execute().get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
 
@@ -546,7 +529,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                         }
-                        View activeView = (View) mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
+                        View activeView = mViewPager.findViewWithTag("view" + mViewPager.getCurrentItem());
                         Activity host = (Activity) activeView.getContext();
                         refreshFriendsList(activeView, host);
 
@@ -707,9 +690,7 @@ public class MainActivity extends AppCompatActivity {
                             String[] resp_status_3 = new String[0];
                             try {
                                 resp_status_3 = network_task_3.execute().get();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (ExecutionException e) {
+                            } catch (InterruptedException | ExecutionException e) {
                                 e.printStackTrace();
                             }
                             init_checked_location = true;
@@ -753,38 +734,32 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     String[] resp_status = network_task_friends.execute().get();
                     if(resp_status[0] != "success") return;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
-                // GET LOCAL MESSAGES
+        // GET LOCAL MESSAGES
                 //if(!(ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(v.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
                     String[] params_local = {user_id, "local"};
                     NetworkTask network_task_local = new NetworkTask("receive_msg", params_local);
                     try {
                         String[] resp_status = network_task_local.execute().get();
-                        if (resp_status[0] != "success") return;
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
+                        if (!Objects.equals(resp_status[0], "success")) return;
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
-                //}
+        //}
 
                 // GET GLOBAL MESSAGES
                 String[] params_global = {user_id,"global"};
                 NetworkTask network_task_global = new NetworkTask("receive_msg", params_global);
                 try {
                     String[] resp_status = network_task_global.execute().get();
-                    if(resp_status[0] != "success") return;
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                    if(!Objects.equals(resp_status[0], "success")) return;
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
-            //}
+        //}
         //}.start();
     }
 
@@ -795,9 +770,17 @@ public class MainActivity extends AppCompatActivity {
         Animation arrive = AnimationUtils.loadAnimation(v.getContext(), R.anim.arrive);
 
         ArrayList<String> cur_remaining_messages = new ArrayList<String>();
-        if(cur_group_name == "friends") cur_remaining_messages = remaining_messages_friends;
-        else if(cur_group_name == "local") cur_remaining_messages = remaining_messages_local;
-        else cur_remaining_messages = remaining_messages_global;
+        switch (cur_group_name) {
+            case "friends":
+                cur_remaining_messages = remaining_messages_friends;
+                break;
+            case "local":
+                cur_remaining_messages = remaining_messages_local;
+                break;
+            default:
+                cur_remaining_messages = remaining_messages_global;
+                break;
+        }
         final ArrayList<String> final_cur_remaining_messages = cur_remaining_messages;
 
         final EditText reg_editText = (EditText) finalv.findViewById(R.id.msg_box);
@@ -838,9 +821,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] resp_status_2 = new String[0];
                     try {
                         resp_status_2 = network_task_2.execute().get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }
@@ -877,9 +858,7 @@ public class MainActivity extends AppCompatActivity {
                     String[] resp_status_2 = new String[0];
                     try {
                         resp_status_2 = network_task_2.execute().get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }
@@ -923,9 +902,7 @@ public class MainActivity extends AppCompatActivity {
                 String[] resp_status = new String[0];
                 try {
                     resp_status = network_task.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
@@ -949,9 +926,7 @@ public class MainActivity extends AppCompatActivity {
                 String[] resp_status_2 = new String[0];
                 try {
                     resp_status_2 = network_task_2.execute().get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
+                } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
 
@@ -972,14 +947,14 @@ public class MainActivity extends AppCompatActivity {
     public static String censor_weight = "partial"; // none | full | partial
     public static String censor_type = "emoji"; // star | grawlix | emoji | cute | synonym
     public static String censor(String msg, String profanity_flags) {
-        if(censor_weight == "none") return msg;
+        if(censor_weight.equals("none")) return msg;
         // for every word
         for(int i = 0; i < profanity_flags.length(); i++) {
             if(profanity_flags.charAt(i) == '1') {
                 // censor word
                 String cur_word = getNthWord(msg,i);
                 int start, end;
-                if(censor_weight == "full") {
+                if(censor_weight.equals("full")) {
                     start = 0;
                     end = cur_word.length();
                 } else {
@@ -998,7 +973,7 @@ public class MainActivity extends AppCompatActivity {
                             ArrayList<String> grawlix_chars = new ArrayList<>(Arrays.asList("@","#","$","%","&","!"));
                             char last_char;
                             if(censored_word.length() > 0) last_char = censored_word.charAt(censored_word.length()-1);
-                            else if(censor_weight == "partial") last_char = cur_word.charAt(0);
+                            else if(censor_weight.equals("partial")) last_char = cur_word.charAt(0);
                             else last_char = '\n'; // something not in gralix_chars[]
 
                             if(grawlix_chars.contains(last_char + "")) {

@@ -108,7 +108,7 @@ public class PlaceholderFragment extends Fragment {
         int section_num = getArguments().getInt(ARG_SECTION_NUMBER)-1;
         textView.setText(page_title[section_num]);
 
-        // hide/show contents for seperate pages
+        // hide/show contents for separate pages
         final EditText msg_box = (EditText) rootView.findViewById(R.id.msg_box);
         Button add_friend_btn = (Button) rootView.findViewById(R.id.add_friend_btn);
         TextView stuur_key_txt = (TextView) rootView.findViewById(R.id.stuur_key_txt);
@@ -141,8 +141,8 @@ public class PlaceholderFragment extends Fragment {
             MainActivity.hideKeyboard(getActivity());
 
 
-
-            stuur_key_txt.setText("Your stuur key: " + MainActivity.user_key);
+            String stuur_key = "Your stuur key: " + MainActivity.user_key;
+            stuur_key_txt.setText(stuur_key);
 
             //weight and type lists with chechboxes
             final String[] weights = {"Full Censor", "Partial Censor", "No Censor"};
@@ -348,9 +348,7 @@ public class PlaceholderFragment extends Fragment {
             String[] resp_status_3 = new String[0];
             try {
                 resp_status_3 = network_task_3.execute().get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
             MainActivity.init_checked_location = true;

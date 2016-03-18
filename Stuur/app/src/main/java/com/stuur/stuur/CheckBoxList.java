@@ -24,17 +24,27 @@ public class CheckBoxList extends ArrayAdapter<String>{
         this.checked = checked;
     }
 
+    private class ViewHolder {
+        TextView txtValue;
+        CheckBox checkBox;
+    }
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
+        ViewHolder holder;
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView= inflater.inflate(R.layout.check_box_single, null, true);
-        TextView txtValue = (TextView) rowView.findViewById(R.id.settings_val);
-        CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
 
-        checkBox.setChecked(checked[position]);
+        if(view == null) {
+            view = inflater.inflate(R.layout.check_box_single, parent, true);
+            holder = new ViewHolder();
+            holder.txtValue = (TextView)view.findViewById(R.id.settings_val);
+            holder.checkBox = (CheckBox)view.findViewById(R.id.checkbox);
+        } else
+            holder = (ViewHolder)view.getTag();
 
-        txtValue.setText(value[position]);
-
-        return rowView;
+        view.setTag(holder);
+        holder.txtValue.setText(value[position]);
+        holder.checkBox.setChecked(checked[position]);
+        return view;
     }
 }

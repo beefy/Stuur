@@ -25,16 +25,27 @@ public class CustomList extends ArrayAdapter<String>{
         this.description = description;
     }
 
+    private class ViewHolder {
+        TextView txtValue;
+        TextView txtDesc;
+    }
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
+        ViewHolder holder;
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView= inflater.inflate(R.layout.list_single, null, true);
-        TextView txtValue = (TextView) rowView.findViewById(R.id.val);
-        TextView txtDesc = (TextView) rowView.findViewById(R.id.desc);
 
-        txtValue.setText(value[position]);
-        txtDesc.setText(description[position]);
+        if(view == null) {
+            view = inflater.inflate(R.layout.list_single, parent, true);
+            holder = new ViewHolder();
+            holder.txtValue = (TextView)view.findViewById(R.id.val);
+            holder.txtDesc = (TextView)view.findViewById(R.id.desc);
+        } else
+            holder = (ViewHolder)view.getTag();
 
-        return rowView;
+        view.setTag(holder);
+        holder.txtValue.setText(value[position]);
+        holder.txtDesc.setText(description[position]);
+        return view;
     }
 }

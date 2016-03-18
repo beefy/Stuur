@@ -328,9 +328,22 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
                 resp = receive_msg(parameters[0], parameters[1]);
                 if (resp != null && resp[0] != null) {
                     for(int i = 0; i < NetworkTask.resp[0].length; i++) {
-                        if(parameters[1] == "friends") MainActivity.remaining_messages_friends.add(MainActivity.censor(resp[0][i], resp[1][i]));
-                        if(parameters[1] == "local") MainActivity.remaining_messages_local.add(MainActivity.censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
-                        if(parameters[1] == "global") MainActivity.remaining_messages_global.add(MainActivity.censor(NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                        switch(parameters[1]) {
+                            case "friends":
+                                MainActivity.remaining_messages_friends.add(MainActivity.censor
+                                        (resp[0][i], resp[1][i]));
+                                break;
+                            case "local":
+                                MainActivity.remaining_messages_local.add(MainActivity.censor
+                                        (NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                                break;
+                            case "global":
+                                MainActivity.remaining_messages_global.add(MainActivity.censor
+                                        (NetworkTask.resp[0][i], NetworkTask.resp[1][i]));
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
                 return success;
