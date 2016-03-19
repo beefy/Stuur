@@ -36,7 +36,7 @@ public class CustomList extends ArrayAdapter<String>{
         LayoutInflater inflater = context.getLayoutInflater();
 
         if(view == null) {
-            view = inflater.inflate(R.layout.list_single, parent, true);
+            view = inflater.inflate(R.layout.list_single, parent, false);
             holder = new ViewHolder();
             holder.txtValue = (TextView)view.findViewById(R.id.val);
             holder.txtDesc = (TextView)view.findViewById(R.id.desc);

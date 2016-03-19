@@ -35,7 +35,7 @@ public class CheckBoxList extends ArrayAdapter<String>{
         LayoutInflater inflater = context.getLayoutInflater();
 
         if(view == null) {
-            view = inflater.inflate(R.layout.check_box_single, parent, true);
+            view = inflater.inflate(R.layout.check_box_single, parent, false);
             holder = new ViewHolder();
             holder.txtValue = (TextView)view.findViewById(R.id.settings_val);
             holder.checkBox = (CheckBox)view.findViewById(R.id.checkbox);

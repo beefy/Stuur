@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -30,6 +31,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -52,6 +54,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.lang3.mutable.Mutable;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -64,6 +67,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.zip.Inflater;
+
+import io.branch.referral.Branch;
+import io.branch.referral.BranchError;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -129,6 +135,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Automatic session tracking
+        Branch.getAutoInstance(getApplicationContext());
+
+        Branch branch = Branch.getInstance();
+        branch.initSession(new Branch.BranchReferralInitListener() {
+            @Override
+            public void onInitFinished(JSONObject referringParams, BranchError error) {
+                if (error == null) {
+                    // params are the deep linked params associated with the link that the user clicked before showing up
+                    Log.i("BranchConfigTest", "deep link data: " + referringParams.toString());
+                }
+            }
+        }, this.getIntent().getData(), this);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -224,6 +244,11 @@ public class MainActivity extends AppCompatActivity {
 
         MainActivity.loadType(mViewPager);
         MainActivity.loadWeight(mViewPager);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        this.setIntent(intent);
     }
 
     public Bitmap scaleCenterCrop(Bitmap source, int newHeight, int newWidth) {

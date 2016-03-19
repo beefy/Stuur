@@ -33,12 +33,9 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <category android:name="android.intent.category.APP_MESSAGING"/>
             </intent-filter>
         </activity>
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_gjf2uCpTZOEyUKSz6xDXrchotAhQmgZV" />
     </application>
 
 </manifest>
-
-<!-- Test with this URL for the indexing of the app from Google search:
-     https://developers.google.com/app-indexing/android/test -->
