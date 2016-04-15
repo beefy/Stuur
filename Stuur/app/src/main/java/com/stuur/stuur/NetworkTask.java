@@ -109,6 +109,18 @@ public class NetworkTask  extends AsyncTask<Void, String, String[]> {
         }
         */
 
+        String[] msg_chars = new String[msg_text.length()];
+
+        for(int i=0; i < msg_text.length(); i++) {
+            msg_chars[i] = "\\" +String.valueOf(String.format("\\u%04x", (int) msg_text.charAt(i)));
+        }
+
+        msg_text = "";
+
+        for(int i=0; i < msg_chars.length; i++) {
+            msg_text += msg_chars[i];
+        }
+
         try {
             encoded_msg = URLEncoder.encode(msg_text, "UTF-8");
         } catch (UnsupportedEncodingException e) {
