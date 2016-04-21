@@ -216,10 +216,11 @@ public class MainActivity extends AppCompatActivity {
         }, 0, 5000);
 
         //get location
-        locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
-        if (!(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
+        //locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+        //if (!(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+        //    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //    init_checked_location = true;
+        //}
 
         // set background image
         Display display= getWindowManager().getDefaultDisplay();
@@ -702,38 +703,42 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String permission[], int[] grantResults) {
         switch (requestCode) {
             case 1:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    try {
-                        locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
-                        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                        if(location != null) {
-                            double lng = location.getLongitude();
-                            double lat = location.getLatitude();
+                //if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    //if (!init_checked_location) {
+                        try {
+                            locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                            if (location != null) {
+                                double lng = location.getLongitude();
+                                double lat = location.getLatitude();
 
-                            String[] params_3 = {user_id, Double.toString(lat), Double.toString(lng)};
-                            NetworkTask network_task_3 = new NetworkTask("update_location", params_3);
-                            String[] resp_status_3 = new String[0];
-                            try {
-                                resp_status_3 = network_task_3.execute().get();
-                            } catch (InterruptedException | ExecutionException e) {
-                                e.printStackTrace();
+                                String[] params_3 = {user_id, Double.toString(lat), Double.toString(lng)};
+                                NetworkTask network_task_3 = new NetworkTask("update_location", params_3);
+                                String[] resp_status_3 = new String[0];
+                                try {
+                                    resp_status_3 = network_task_3.execute().get();
+                                } catch (InterruptedException | ExecutionException e) {
+                                    e.printStackTrace();
+                                }
+                                //init_checked_location = true;
                             }
-                            init_checked_location = true;
-                        }
-                    } catch(SecurityException e) {
-                        //if(PlaceholderFragment.init) {
+                        } catch (SecurityException e) {
+                            //if(PlaceholderFragment.init) {
                             final Toast toast = Toast.makeText(getApplicationContext(), "Turn location on to send Local Messages!", Toast.LENGTH_LONG);
                             toast.show();
-                        //}
-                    }
-                } else {
-                    permissions_denied = true;
-                    init_checked_location = true;
-                }
+                            //}
+                        }
+                    //}
+//                } else {
+//                    permissions_denied = true;
+//                    init_checked_location = true;
+//                }
                 break;
             default:
-                permissions_denied = true;
-                init_checked_location = true;
+                final Toast toast = Toast.makeText(getApplicationContext(), "Turn location on to send Local Messages!", Toast.LENGTH_LONG);
+                toast.show();
+                //permissions_denied = true;
+                //init_checked_location = true;
                 break;
 
         }

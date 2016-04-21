@@ -330,15 +330,16 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState1) {
         super.onActivityCreated(savedInstanceState1);
-        //if(MainActivity.init_checked_location & !MainActivity.permissions_denied) {
+        if(savedInstanceState1 == null && !MainActivity.init_checked_location) { //MainActivity.init_checked_location & !MainActivity.permissions_denied &&
             getLocation(getActivity());
-        //}
+            MainActivity.init_checked_location = true;
+        }
     }
 
     public void getLocation(Activity activity) {
-        if (!MainActivity.init_checked_location || (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+        if ((ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},1);
-        } else if(!MainActivity.permissions_denied){
+        } else { //if(!MainActivity.permissions_denied){
             if(MainActivity.location == null) return;
             double lng = MainActivity.location.getLongitude();
             double lat = MainActivity.location.getLatitude();
@@ -351,7 +352,6 @@ public class PlaceholderFragment extends Fragment {
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
-            MainActivity.init_checked_location = true;
         }
     }
 }
