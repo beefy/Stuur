@@ -20,6 +20,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -93,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
     public static String[] friend_keys = {""};
     public static boolean msg_sent_resp = false;
     public static String friend_added = "0";
-    public static int[] background_images = {R.drawable.aurora, R.drawable.neuschwanstein, R.drawable.street,R.drawable.hillside, R.drawable.autumn, R.drawable.fence, R.drawable.fog, R.drawable.ocean, R.drawable.toast };
-    public static int[] title_colors = {Color.rgb(209,209,209),Color.rgb(99,99,99),Color.rgb(66,66,66), Color.rgb(99,99,99), Color.rgb(66,66,66),Color.rgb(229,229,229),Color.rgb(99,99,99),Color.rgb(209,209,209),Color.rgb(66,66,66)};
+    public static int[] background_images = {R.drawable.aurora, R.drawable.neuschwanstein, R.drawable.street, R.drawable.hillside, R.drawable.autumn, R.drawable.fence, R.drawable.fog, R.drawable.ocean, R.drawable.toast};
+    public static int[] title_colors = {Color.rgb(209, 209, 209), Color.rgb(99, 99, 99), Color.rgb(66, 66, 66), Color.rgb(99, 99, 99), Color.rgb(66, 66, 66), Color.rgb(229, 229, 229), Color.rgb(99, 99, 99), Color.rgb(209, 209, 209), Color.rgb(66, 66, 66)};
     public static int background_image = 0;
     public static boolean permissions_denied = false;
     public static Location location;
@@ -216,14 +217,15 @@ public class MainActivity extends AppCompatActivity {
         }, 0, 5000);
 
         //get location
-        //locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
-        //if (!(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-        //    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        //    init_checked_location = true;
-        //}
+        locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.e("MAIN", "Location init");
+            LocationListener locationListener = new StuurLocationListener();
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1 * 5000, 150 * 1000, locationListener);
+        }
 
         // set background image
-        Display display= getWindowManager().getDefaultDisplay();
+        Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         final View mainView = getWindow().getDecorView();
@@ -285,17 +287,17 @@ public class MainActivity extends AppCompatActivity {
         return dest;
     }
 
-    public static void onChangeCheckbox(Bundle savedInstanceState, View v, CheckBox checkBox, String flag){
+    public static void onChangeCheckbox(Bundle savedInstanceState, View v, CheckBox checkBox, String flag) {
 
         boolean isChecked = checkBox.isChecked();
 
-        if (flag.equals("weight") && !isChecked){
+        if (flag.equals("weight") && !isChecked) {
 
             ListView list = (ListView) v.findViewById(R.id.censor_weight_list);
             removeAllChecks(list);
             checkBox.setChecked(true);
 
-        } else if (flag.equals("type") && !isChecked){
+        } else if (flag.equals("type") && !isChecked) {
 
             ListView list = (ListView) v.findViewById(R.id.censor_type_list);
             removeAllChecks(list);
@@ -306,16 +308,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static void removeAllChecks(ViewGroup vg) {
         View v = null;
-        for(int i = 0; i < vg.getChildCount(); i++){
+        for (int i = 0; i < vg.getChildCount(); i++) {
             try {
                 v = vg.getChildAt(i);
-                ((CheckBox)v).setChecked(false);
-            }
-            catch(Exception e1){ //if not checkBox, null View, etc
+                ((CheckBox) v).setChecked(false);
+            } catch (Exception e1) { //if not checkBox, null View, etc
                 try {
-                    removeAllChecks((ViewGroup)v);
-                }
-                catch(Exception e2){ //v is not a view group
+                    removeAllChecks((ViewGroup) v);
+                } catch (Exception e2) { //v is not a view group
                     continue;
                 }
             }
@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
                     Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
                     keyText.startAnimation(shake);
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
-                } else if(nickText.getText().toString().contains(",")) {
+                } else if (nickText.getText().toString().contains(",")) {
                     Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
                     nickText.startAnimation(shake);
                     Toast.makeText(v.getContext(), "Nickname cannot contain \",\"", Toast.LENGTH_SHORT).show();
@@ -520,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
                     Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
                     keyText.startAnimation(shake);
                     Toast.makeText(v.getContext(), "Please enter a user key", Toast.LENGTH_SHORT).show();
-                } else if(nickText.getText().toString().contains(",")) {
+                } else if (nickText.getText().toString().contains(",")) {
                     Animation shake = AnimationUtils.loadAnimation(v.getContext(), R.anim.shake);
                     nickText.startAnimation(shake);
                     Toast.makeText(v.getContext(), "Nickname cannot contain \",\"", Toast.LENGTH_SHORT).show();
@@ -588,14 +588,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public static void addFriendLocally(View view, String name, int position){
+    public static void addFriendLocally(View view, String name, int position) {
         SharedPreferences sharedpreferences;
         sharedpreferences = view.getContext().getSharedPreferences(MyFRIENDS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpreferences.edit();
         String added = "";
-        for(int i = 0; i < friend_nicks.length+1; i++) {
-            if(i == position) added += name + ",";
-            if(i < friend_nicks.length) added += friend_nicks[i] + ",";
+        for (int i = 0; i < friend_nicks.length + 1; i++) {
+            if (i == position) added += name + ",";
+            if (i < friend_nicks.length) added += friend_nicks[i] + ",";
         }
         editor.putString(FRIENDS, added);
         editor.apply();
@@ -608,15 +608,15 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedpreferences.edit();
         String[] cur_friends = getFriendsLocally(view).split(",");
         ArrayList<String> temp = new ArrayList<String>();
-        for(int i = 0; i < cur_friends.length; i++) {
-            if(i != position) {
+        for (int i = 0; i < cur_friends.length; i++) {
+            if (i != position) {
                 temp.add(cur_friends[i]);
             }
         }
         cur_friends = temp.toArray(new String[temp.size()]);
         friend_nicks = cur_friends;
         String added = "";
-        for(int i = 0; i < cur_friends.length; i++) {
+        for (int i = 0; i < cur_friends.length; i++) {
             added += cur_friends[i] + ",";
         }
         editor.putString(FRIENDS, added + ",");
@@ -624,7 +624,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static String getFriendsLocally(View view){
+    public static String getFriendsLocally(View view) {
 
         SharedPreferences sharedpreferences;
         sharedpreferences = view.getContext().getSharedPreferences(MyFRIENDS, Context.MODE_PRIVATE);
@@ -704,31 +704,11 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1:
                 //if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    //if (!init_checked_location) {
-                        try {
-                            locationManager = (LocationManager) getSystemService(getApplicationContext().LOCATION_SERVICE);
-                            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null) {
-                                double lng = location.getLongitude();
-                                double lat = location.getLatitude();
+                //if (!init_checked_location) {
+                LocationListener locationListener = new StuurLocationListener();
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 25 * 60000, 150 * 1000, locationListener);
 
-                                String[] params_3 = {user_id, Double.toString(lat), Double.toString(lng)};
-                                NetworkTask network_task_3 = new NetworkTask("update_location", params_3);
-                                String[] resp_status_3 = new String[0];
-                                try {
-                                    resp_status_3 = network_task_3.execute().get();
-                                } catch (InterruptedException | ExecutionException e) {
-                                    e.printStackTrace();
-                                }
-                                //init_checked_location = true;
-                            }
-                        } catch (SecurityException e) {
-                            //if(PlaceholderFragment.init) {
-                            final Toast toast = Toast.makeText(getApplicationContext(), "Turn location on to send Local Messages!", Toast.LENGTH_LONG);
-                            toast.show();
-                            //}
-                        }
-                    //}
+                //}
 //                } else {
 //                    permissions_denied = true;
 //                    init_checked_location = true;

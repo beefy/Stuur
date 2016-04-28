@@ -22,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -54,6 +55,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.stuur.stuur.MainActivity.background_image;
 import static com.stuur.stuur.MainActivity.censor_type;
 import static com.stuur.stuur.MainActivity.censor_weight;
@@ -352,6 +354,7 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState1) {
         super.onActivityCreated(savedInstanceState1);
+
         if(savedInstanceState1 == null && !MainActivity.init_checked_location) { //MainActivity.init_checked_location & !MainActivity.permissions_denied &&
             getLocation(getActivity());
             MainActivity.init_checked_location = true;
@@ -361,19 +364,6 @@ public class PlaceholderFragment extends Fragment {
     public void getLocation(Activity activity) {
         if ((ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},1);
-        } else { //if(!MainActivity.permissions_denied){
-            if(MainActivity.location == null) return;
-            double lng = MainActivity.location.getLongitude();
-            double lat = MainActivity.location.getLatitude();
-
-            String[] params_3 = {MainActivity.user_id, Double.toString(lat), Double.toString(lng)};
-            NetworkTask network_task_3 = new NetworkTask("update_location", params_3);
-            String[] resp_status_3 = new String[0];
-            try {
-                resp_status_3 = network_task_3.execute().get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
