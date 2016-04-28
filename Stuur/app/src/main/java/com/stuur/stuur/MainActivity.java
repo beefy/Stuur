@@ -705,8 +705,12 @@ public class MainActivity extends AppCompatActivity {
             case 1:
                 //if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 //if (!init_checked_location) {
-                LocationListener locationListener = new StuurLocationListener();
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 25 * 60000, 150 * 1000, locationListener);
+                try {
+                    LocationListener locationListener = new StuurLocationListener();
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 25 * 60000, 150 * 1000, locationListener);
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
 
                 //}
 //                } else {

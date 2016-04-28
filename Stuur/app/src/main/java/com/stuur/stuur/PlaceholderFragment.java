@@ -294,26 +294,29 @@ public class PlaceholderFragment extends Fragment {
                             if (msg_box.getText().length() == 0 || (section_num_f == 3 && (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED))) {
                                 MainActivity.shakeMsgBox(rootView);
 
-                                 //////////////////////////////////////////////////////////////
-                                 ////////////////////// START TOAST ///////////////////////////
-                                 //////////////////////////////////////////////////////////////
+                                if (msg_box.getText().length() != 0) {
 
-                                 // toast text
-                                 CharSequence text = "Turn location on to send Local Messages!";
-                                 // empty edit text
-                                 msg_box.setText("", TextView.BufferType.EDITABLE);
-                                 // toast duration
-                                 int duration = Toast.LENGTH_SHORT;
-                                 // making the toast
-                                 Toast toast = Toast.makeText(getContext(), text, duration);
-                                 // setting toast gravity/position
-                                 toast.setGravity(Gravity.CENTER_VERTICAL, 0, -200);
-                                 // showing toast
-                                 toast.show();
+                                    //////////////////////////////////////////////////////////////
+                                    ////////////////////// START TOAST ///////////////////////////
+                                    //////////////////////////////////////////////////////////////
 
-                                 //////////////////////////////////////////////////////////////
-                                 ////////////////////// END TOAST /////////////////////////////
-                                 //////////////////////////////////////////////////////////////
+                                    // toast text
+                                    CharSequence text = "Turn location on to send Local Messages!";
+                                    // empty edit text
+                                    msg_box.setText("", TextView.BufferType.EDITABLE);
+                                    // toast duration
+                                    int duration = Toast.LENGTH_SHORT;
+                                    // making the toast
+                                    Toast toast = Toast.makeText(getContext(), text, duration);
+                                    // setting toast gravity/position
+                                    toast.setGravity(Gravity.CENTER_VERTICAL, 0, -200);
+                                    // showing toast
+                                    toast.show();
+
+                                    //////////////////////////////////////////////////////////////
+                                    ////////////////////// END TOAST /////////////////////////////
+                                    //////////////////////////////////////////////////////////////
+                                }
                             } else {
                                 MainActivity.sendMsgAnimation(rootView);
                             }
